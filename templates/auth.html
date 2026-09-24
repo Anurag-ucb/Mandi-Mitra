@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MandiMitra - Authentication & Procurement Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Font Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        agri: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        mandi: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309',
+                            800: '#92400e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        .hero-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#16a34a 0.75px, transparent 0.75px), radial-gradient(#16a34a 0.75px, #f8fafc 0.75px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+        }
+        .transition-all-custom {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+
+   <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <a href="#" class="flex items-center gap-3 group">
+          <div>
+            <span class="font-extrabold text-xl tracking-tight text-stone-900">
+              Mandi<span class="text-emerald-700">Mitra</span>
+            </span>
+          </div>
+        </a>
+
+        <div class="flex items-center gap-3 sm:gap-4">
+          <button  class="bg-white hover:bg-emerald-700 text-black px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5">
+            Authentication Portal
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
+
+        <!-- AUTHENTICATION CONTAINER (When logged out) -->
+        <div id="authViewContainer" class="w-full max-w-2xl my-auto">
+            
+            <!-- Hero Title Badge -->
+            <div class="text-center mb-6">
+                
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    Welcome to <span class="text-emerald-700">MandiMitra</span>
+                </h1>
+                <p class="text-sm sm:text-base text-slate-600 mt-1 max-w-md mx-auto">
+                    Unified Portal for Farmers & Government Procurement Officers. Register and access secure mandi services.
+                </p>
+            </div>
+
+            <!-- Glass Card Main Body -->
+            <div class="glass-card rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+                
+                <!-- Role & Auth Mode Navigation Tabs -->
+                <div class="bg-slate-100 p-2 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                    <button id="tabFarmerLogin" onclick="switchAuthTab('farmer', 'login')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200">
+                        <i class="fa-solid fa-tractor text-emerald-600"></i>
+                        <span>Farmer Login</span>
+                    </button>
+
+                    <button id="tabFarmerRegister" onclick="switchAuthTab('farmer', 'register')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-user-plus text-emerald-600"></i>
+                        <span>Farmer Signup</span>
+                    </button>
+
+                    <button id="tabOfficerLogin" onclick="switchAuthTab('officer', 'login')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-id-card text-indigo-600"></i>
+                        <span>Officer Login</span>
+                    </button>
+
+                    <button id="tabOfficerRegister" onclick="switchAuthTab('officer', 'register')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
+                        <i class="fa-solid fa-building-columns text-indigo-600"></i>
+                        <span>Officer Register</span>
+                    </button>
+                </div>
+
+                <!-- Form Wrapper Body -->
+                <div class="p-6 sm:p-8">
+
+                    <!-- FORM 1: FARMER LOGIN -->
+                    <form id="farmerLoginForm" onsubmit="handleLogin(event, 'farmer')" class="space-y-4">
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-emerald-800 mb-2">
+                            <i class="fa-solid fa-circle-info text-emerald-600 text-base mt-0.5"></i>
+                            <div>
+                                <span class="font-bold">Kisan Login:</span> Enter your registered email address and password to view your mandi slot details and MSP token registry.
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Farmer Email ID *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+                                <input type="email" id="farmerLoginEmail" required placeholder="kisan@mandimitra.in" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-lock"></i>
+                                </div>
+                                <input type="password" id="farmerLoginPass" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                <button type="button" onclick="togglePasswordVisibility('farmerLoginPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs pt-1">
+                            <label class="flex items-center text-slate-600 cursor-pointer">
+                                <input type="checkbox" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 mr-2">
+                                Remember Credentials
+                            </label>
+                            <button type="button" onclick="fillTestCredentials('farmer')" class="text-emerald-700 font-semibold hover:underline">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Fill Test Kisan
+                            </button>
+                        </div>
+
+                        <button type="submit" id="farmerLoginSubmitBtn" class="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center space-x-2">
+                            <span>Login to Farmer Dashboard</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </button>
+                    </form>
+
+
+                    <!-- FORM 2: FARMER SIGNUP -->
+                    <form id="farmerRegisterForm" onsubmit="handleSignup(event, 'farmer')" class="hidden space-y-4">
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-emerald-800 mb-2">
+                            <i class="fa-solid fa-user-check text-emerald-600 text-base mt-0.5"></i>
+                            <div>
+                                <span class="font-bold">New Farmer Registration:</span> Store your details directly in MandiMitra Cloud Database for official MSP procurement slotting.
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name *</label>
+                                <input type="text" id="farmerFullName" required placeholder="e.g. Ramesh Kumar Patel" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mobile Number *</label>
+                                <input type="tel" id="farmerPhone" pattern="[0-9]{10}" required placeholder="10-digit mobile number" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
+                                <input type="email" id="farmerRegEmail" required placeholder="ramesh@kisan.in" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password *</label>
+                                <div class="relative">
+                                    <input type="password" id="farmerRegPass" required minlength="6" placeholder="Min. 6 characters" class="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    <button type="button" onclick="togglePasswordVisibility('farmerRegPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Village / Panchayat *</label>
+                                <input type="text" id="farmerVillage" required placeholder="e.g. Rampur" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">District *</label>
+                                <input type="text" id="farmerDistrict" required placeholder="e.g. Karnal" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">State *</label>
+                                <select id="farmerState" required class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                    <option value="">Select State</option>
+                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                    <option value="Punjab">Punjab</option>
+                                    <option value="Haryana">Haryana</option>
+                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                    <option value="Rajasthan">Rajasthan</option>
+                                    <option value="Bihar">Bihar</option>
+                                    <option value="Gujarat">Gujarat</option>
+                                    <option value="Maharashtra">Maharashtra</option>
+                                    <option value="Other">Other State</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Primary Produce / Crop Type *</label>
+                            <select id="farmerCrop" required class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                                <option value="">Select Main Crop Type</option>
+                                <option value="Wheat (Gehu)">Wheat (Gehu)</option>
+                                <option value="Rice / Paddy (Dhan)">Rice / Paddy (Dhan)</option>
+                                <option value="Mustard (Sarson)">Mustard (Sarson)</option>
+                                <option value="Maize (Makka)">Maize (Makka)</option>
+                                <option value="Pulses (Dal / Gram)">Pulses (Dal / Gram)</option>
+                                <option value="Sugarcane (Ganna)">Sugarcane (Ganna)</option>
+                                <option value="Cotton (Kapas)">Cotton (Kapas)</option>
+                                <option value="Vegetables / Horticulture">Vegetables / Horticulture</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" id="farmerRegSubmitBtn" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <span>Create Farmer Account & Sync Data</span>
+                        </button>
+                    </form>
+
+
+                    <!-- FORM 3: OFFICER LOGIN -->
+                    <form id="officerLoginForm" onsubmit="handleLogin(event, 'officer')" class="hidden space-y-4">
+                        <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-indigo-900 mb-2">
+                            <i class="fa-solid fa-user-shield text-indigo-600 text-base mt-0.5"></i>
+                            <div>
+                                <span class="font-bold">Mandi Official Authorization:</span> Access government procurement ledger, verify farmer gate passes, and issue payment certificates.
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Official Email Address *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-briefcase"></i>
+                                </div>
+                                <input type="email" id="officerLoginEmail" required placeholder="officer@mandi.gov.in" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Security Password *</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-key"></i>
+                                </div>
+                                <input type="password" id="officerLoginPass" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <button type="button" onclick="togglePasswordVisibility('officerLoginPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs pt-1">
+                            <label class="flex items-center text-slate-600 cursor-pointer">
+                                <input type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 mr-2">
+                                Save Official Session
+                            </label>
+                            <button type="button" onclick="fillTestCredentials('officer')" class="text-indigo-700 font-semibold hover:underline">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Fill Test Officer
+                            </button>
+                        </div>
+
+                        <button type="submit" id="officerLoginSubmitBtn" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-slate-800 hover:from-indigo-700 hover:to-slate-900 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center space-x-2">
+                            <span>Authenticate Mandi Officer</span>
+                            <i class="fa-solid fa-shield-check text-xs"></i>
+                        </button>
+                    </form>
+
+
+                    <!-- FORM 4: OFFICER SIGNUP -->
+                    <form id="officerRegisterForm" onsubmit="handleSignup(event, 'officer')" class="hidden space-y-4">
+                        <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-indigo-900 mb-2">
+                            <i class="fa-solid fa-building-circle-check text-indigo-600 text-base mt-0.5"></i>
+                            <div>
+                                <span class="font-bold">Procurement Officer Enrollment:</span> Create authorized officer credentials registered to your assigned Mandi Procurement Center.
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Officer Full Name *</label>
+                                <input type="text" id="officerFullName" required placeholder="e.g. Dr. Anil Verma" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Govt. / Officer ID Badge No. *</label>
+                                <input type="text" id="officerIdBadge" required placeholder="e.g. MANDI-OFF-7821" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned Procurement Mandi *</label>
+                                <input type="text" id="officerCentreName" required placeholder="e.g. Central Anaj Mandi Sector 4" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">District / Station *</label>
+                                <input type="text" id="officerDistrict" required placeholder="e.g. Ludhiana" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Official Email Address *</label>
+                                <input type="email" id="officerRegEmail" required placeholder="anil.verma@mandi.gov.in" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Secure Password *</label>
+                                <div class="relative">
+                                    <input type="password" id="officerRegPass" required minlength="6" placeholder="Min 6 characters" class="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                    <button type="button" onclick="togglePasswordVisibility('officerRegPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="officerRegSubmitBtn" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center space-x-2">
+                            <i class="fa-solid fa-database"></i>
+                            <span>Register Official & Save Record</span>
+                        </button>
+                    </form>
+
+                </div>
+
+                <!-- Card Footer Project Config Info -->
+                <div class="bg-slate-100 px-6 py-3 border-t border-slate-200 flex flex-wrap items-center justify-between text-xs text-slate-500">
+                    <span class="flex items-center space-x-1">
+                        <i class="fa-solid fa-server text-emerald-600"></i>
+                        <span>Firebase Project ID: <strong class="font-mono text-slate-700">mandimitra-8feda</strong></span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <i class="fa-solid fa-lock text-slate-400"></i>
+                        <span>SSL Encrypted Session</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER PROFILE DASHBOARD CONTAINER (When logged in) -->
+        
+
+    </main>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full pointer-events-none"></div>
+
+    <!-- FIREBASE MODULAR SDK V11 SETUP SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+        import { 
+            getFirestore, 
+            doc, 
+            setDoc, 
+            getDoc, 
+            serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+        // User provided Firebase configuration for MandiMitra
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIs4AfFaQiEk_YG6nxKBFW6ioNWusF2DE",
+            authDomain: "mandimitra-8feda.firebaseapp.com",
+            projectId: "mandimitra-8feda",
+            storageBucket: "mandimitra-8feda.firebasestorage.app",
+            messagingSenderId: "221569995360",
+            appId: "1:221569995360:web:42f65218fec434ac192905",
+            measurementId: "G-9MHKBKEEQR"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Update header UI status
+        const statusBadge = document.getElementById('firebaseStatusBadge');
+        const statusText = document.getElementById('firebaseStatusText');
+        if (statusBadge && statusText) {
+            statusBadge.className = "flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+            statusText.textContent = "Firebase Ready";
+        }
+
+        // Global variables exposed for inline handlers
+        window.activeRole = 'farmer';
+        window.activeMode = 'login';
+        window.currentUserProfile = null;
+
+        // Function: Switch Tab (Farmer/Officer Login/Register)
+        window.switchAuthTab = function(role, mode) {
+            window.activeRole = role;
+            window.activeMode = mode;
+
+            const tabs = ['tabFarmerLogin', 'tabFarmerRegister', 'tabOfficerLogin', 'tabOfficerRegister'];
+            const forms = ['farmerLoginForm', 'farmerRegisterForm', 'officerLoginForm', 'officerRegisterForm'];
+
+            // Deactivate all tabs
+            tabs.forEach(tabId => {
+                const el = document.getElementById(tabId);
+                if (el) {
+                    el.className = "tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5";
+                }
+            });
+
+            // Hide all forms
+            forms.forEach(formId => {
+                const el = document.getElementById(formId);
+                if (el) el.classList.add('hidden');
+            });
+
+            // Activate specific tab & form
+            let activeTabId = '';
+            let activeFormId = '';
+
+            if (role === 'farmer' && mode === 'login') {
+                activeTabId = 'tabFarmerLogin';
+                activeFormId = 'farmerLoginForm';
+            } else if (role === 'farmer' && mode === 'register') {
+                activeTabId = 'tabFarmerRegister';
+                activeFormId = 'farmerRegisterForm';
+            } else if (role === 'officer' && mode === 'login') {
+                activeTabId = 'tabOfficerLogin';
+                activeFormId = 'officerLoginForm';
+            } else if (role === 'officer' && mode === 'register') {
+                activeTabId = 'tabOfficerRegister';
+                activeFormId = 'officerRegisterForm';
+            }
+
+            const activeTab = document.getElementById(activeTabId);
+            const activeForm = document.getElementById(activeFormId);
+
+            if (activeTab) {
+                const activeColor = role === 'farmer' ? 'text-emerald-700' : 'text-indigo-700';
+                activeTab.className = `tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white ${activeColor} shadow-sm border border-slate-200`;
+            }
+            if (activeForm) {
+                activeForm.classList.remove('hidden');
+            }
+        };
+
+        // Function: Toggle Password Visibility
+        window.togglePasswordVisibility = function(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (!input || !icon) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        };
+
+        // Function: Quick Test Credentials Filler
+        window.fillTestCredentials = function(role) {
+            if (role === 'farmer') {
+                document.getElementById('farmerLoginEmail').value = 'kisan.ramesh@mandimitra.in';
+                document.getElementById('farmerLoginPass').value = 'Kisan123';
+                showToast('Filled test farmer credentials!', 'info');
+            } else {
+                document.getElementById('officerLoginEmail').value = 'officer.verma@mandi.gov.in';
+                document.getElementById('officerLoginPass').value = 'Officer123';
+                showToast('Filled test officer credentials!', 'info');
+            }
+        };
+
+        // Function: Handle User Signup (Farmer or Officer)
+        window.handleSignup = async function(event, role) {
+            event.preventDefault();
+            const submitBtn = role === 'farmer' ? document.getElementById('farmerRegSubmitBtn') : document.getElementById('officerRegSubmitBtn');
+            const originalBtnHtml = submitBtn.innerHTML;
+
+            try {
+                // UI Loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Saving to Firestore...</span>`;
+
+                let email = '';
+                let password = '';
+                let userProfileData = {};
+
+                if (role === 'farmer') {
+                    email = document.getElementById('farmerRegEmail').value.trim();
+                    password = document.getElementById('farmerRegPass').value;
+                    const fullName = document.getElementById('farmerFullName').value.trim();
+                    const phone = document.getElementById('farmerPhone').value.trim();
+                    const village = document.getElementById('farmerVillage').value.trim();
+                    const district = document.getElementById('farmerDistrict').value.trim();
+                    const state = document.getElementById('farmerState').value;
+                    const crop = document.getElementById('farmerCrop').value;
+
+                    userProfileData = {
+                        fullName: fullName,
+                        phone: phone,
+                        email: email,
+                        role: 'farmer',
+                        village: village,
+                        district: district,
+                        state: state,
+                        crop: crop,
+                        createdAt: new Date().toISOString()
+                    };
+                } else {
+                    email = document.getElementById('officerRegEmail').value.trim();
+                    password = document.getElementById('officerRegPass').value;
+                    const fullName = document.getElementById('officerFullName').value.trim();
+                    const officerId = document.getElementById('officerIdBadge').value.trim();
+                    const centreName = document.getElementById('officerCentreName').value.trim();
+                    const district = document.getElementById('officerDistrict').value.trim();
+
+                    userProfileData = {
+                        fullName: fullName,
+                        officerId: officerId,
+                        centreName: centreName,
+                        district: district,
+                        email: email,
+                        role: 'officer',
+                        createdAt: new Date().toISOString()
+                    };
+                }
+
+                const userCredential =
+    await createUserWithEmailAndPassword(auth, email, password);
+
+const uid = userCredential.user.uid;
+
+userProfileData.uid = uid;
+
+await setDoc(
+    doc(db, "users", uid),
+    userProfileData
+);
+
+showToast(
+    `Success! Registered ${role === 'farmer' ? 'Kisan' : 'Officer'} account.`,
+    'success'
+);
+
+setTimeout(() => {
+
+    if (role === "farmer") {
+        window.location.href = "{{ url_for('farmer_dashboard') }}";
+    } else {
+        window.location.href = "{{ url_for('centre_dashboard') }}";
+    }
+
+}, 800);
+            } catch (error) {
+                console.error("Signup Error:", error);
+                let msg = error.message;
+                if (error.code === 'auth/email-already-in-use') {
+                    msg = 'This email address is already registered. Please login instead.';
+                } else if (error.code === 'auth/weak-password') {
+                    msg = 'Password should be at least 6 characters long.';
+                } else if (error.code === 'auth/invalid-email') {
+                    msg = 'Please provide a valid email address.';
+                }
+                showToast(`Signup Failed: ${msg}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            }
+        };
+
+        window.handleLogin = async function(event, role) {
+    event.preventDefault();
+
+    const submitBtn = role === 'farmer'
+        ? document.getElementById('farmerLoginSubmitBtn')
+        : document.getElementById('officerLoginSubmitBtn');
+
+    const originalBtnHtml = submitBtn.innerHTML;
+
+    const emailInputId = role === 'farmer'
+        ? 'farmerLoginEmail'
+        : 'officerLoginEmail';
+
+    const passInputId = role === 'farmer'
+        ? 'farmerLoginPass'
+        : 'officerLoginPass';
+
+    const email = document.getElementById(emailInputId).value.trim();
+    const password = document.getElementById(passInputId).value;
+
+    try {
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <span>Authenticating...</span>
+        `;
+
+        // Firebase login
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+        const user = userCredential.user;
+
+        // Get Firestore profile
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+            showToast(
+                "Login successful, but your profile record was not found.",
+                "error"
+            );
+            return;
+        }
+
+        const userData = userDoc.data();
+
+        // Redirect according to role
+        if (userData.role === "farmer") {
+            window.location.href = "{{ url_for('farmer_dashboard') }}";
+        } 
+        else if (userData.role === "officer") {
+            window.location.href = "{{ url_for('centre_dashboard') }}";
+        } 
+        else {
+            showToast("Unknown account role.", "error");
+        }
+
+    } catch (error) {
+
+        console.error("Login Error:", error);
+
+        let msg = error.message;
+
+        if (
+            error.code === 'auth/invalid-credential' ||
+            error.code === 'auth/user-not-found' ||
+            error.code === 'auth/wrong-password'
+        ) {
+            msg = 'Invalid email or password.';
+        }
+
+        showToast(`Login Failed: ${msg}`, 'error');
+
+    } finally {
+
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalBtnHtml;
+
+    }
+};
+        // Function: Sign Out User
+        window.signOutUser = async function() {
+            try {
+                await signOut(auth);
+                showToast('You have signed out successfully.', 'info');
+            } catch (error) {
+                showToast(`Sign out error: ${error.message}`, 'error');
+            }
+        };
+
+        
+        // Function: Load and Render User Profile from Firestore
+        async function loadAndDisplayUserProfile(authUser) {
+            const dashDisplayName = document.getElementById('dashDisplayName');
+            const profileRoleBadge = document.getElementById('profileRoleBadge');
+            const profileFieldsGrid = document.getElementById('profileFieldsGrid');
+            const firestoreDocBadge = document.getElementById('firestoreDocBadge');
+            const dashUid = document.getElementById('dashUid');
+            const dashEmail = document.getElementById('dashEmail');
+            const dashCreatedTime = document.getElementById('dashCreatedTime');
+            const headerAvatar = document.getElementById('headerAvatar');
+            const roleActionButtons = document.getElementById('roleActionButtons');
+            const widgetTitle = document.getElementById('widgetTitle');
+            const widgetContent = document.getElementById('widgetContent');
+
+            dashUid.textContent = authUser.uid;
+            dashEmail.textContent = authUser.email;
+            firestoreDocBadge.textContent = `doc: users/${authUser.uid.substring(0, 8)}...`;
+
+            try {
+                // Fetch document from Firestore
+                const userDocRef = doc(db, "users", authUser.uid);
+                const docSnap = await getDoc(userDocRef);
+
+                let data = {};
+                if (docSnap.exists()) {
+                    data = docSnap.data();
+                } else {
+                    // Fallback default data if doc doesn't exist yet
+                    data = {
+                        fullName: authUser.displayName || authUser.email.split('@')[0],
+                        email: authUser.email,
+                        role: 'farmer',
+                        createdAt: new Date().toISOString()
+                    };
+                }
+
+                window.currentUserProfile = data;
+
+                const fullName = data.fullName || 'User';
+                const role = data.role || 'farmer';
+                const isFarmer = role === 'farmer';
+
+                dashDisplayName.textContent = fullName;
+                headerAvatar.textContent = fullName.charAt(0).toUpperCase();
+
+                // Style role badge
+                if (isFarmer) {
+                    profileRoleBadge.textContent = "Kisan / Farmer Profile";
+                    profileRoleBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-400 text-slate-950 shadow-sm";
+                } else {
+                    profileRoleBadge.textContent = "Procurement Officer";
+                    profileRoleBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-400 text-slate-950 shadow-sm";
+                }
+
+                // Render detail grid
+                if (isFarmer) {
+                    profileFieldsGrid.innerHTML = `
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">Full Name</span>
+                            <span class="text-slate-900 font-bold">${data.fullName || 'N/A'}</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">Mobile Phone</span>
+                            <span class="text-slate-900 font-bold">${data.phone || 'N/A'}</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">Village / Panchayat</span>
+                            <span class="text-slate-900 font-bold">${data.village || 'N/A'}</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">District & State</span>
+                            <span class="text-slate-900 font-bold">${data.district || 'N/A'}, ${data.state || ''}</span>
+                        </div>
+                        <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl col-span-1 sm:col-span-2">
+                            <span class="text-xs text-emerald-700 font-semibold uppercase block">Primary Agricultural Crop</span>
+                            <span class="text-emerald-950 font-extrabold text-base flex items-center mt-0.5">
+                                <i class="fa-solid fa-wheat-field mr-2 text-emerald-600"></i> ${data.crop || 'General Agriculture'}
+                            </span>
+                        </div>
+                    `;
+
+                    roleActionButtons.innerHTML = `
+                        <button onclick="simulateSlotBooking()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                            <span>Book Mandi Slot</span>
+                        </button>
+                        <button onclick="checkMandiPrices()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Live MSP Prices</span>
+                        </button>
+                    `;
+
+                    widgetTitle.textContent = "Kisan Mandi Procurement Token";
+                    widgetContent.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xs text-slate-500 block">Assigned Gate Token Status:</span>
+                                <span class="text-emerald-700 font-extrabold text-lg">TOKEN #MM-2026-${Math.floor(1000 + Math.random() * 9000)}</span>
+                            </div>
+                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-md font-bold text-xs border border-emerald-300">
+                                Valid for Inspection
+                            </span>
+                        </div>
+                    `;
+
+                } else {
+                    // Officer View
+                    profileFieldsGrid.innerHTML = `
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">Officer Name</span>
+                            <span class="text-slate-900 font-bold">${data.fullName || 'N/A'}</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">Officer ID Badge</span>
+                            <span class="text-slate-900 font-mono font-bold">${data.officerId || 'N/A'}</span>
+                        </div>
+                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl col-span-1 sm:col-span-2">
+                            <span class="text-xs text-slate-500 font-semibold uppercase block">Assigned Procurement Mandi</span>
+                            <span class="text-slate-900 font-bold text-base flex items-center mt-0.5">
+                                <i class="fa-solid fa-building-columns text-indigo-600 mr-2"></i> ${data.centreName || 'Central Mandi'}, ${data.district || ''}
+                            </span>
+                        </div>
+                    `;
+
+                    roleActionButtons.innerHTML = `
+                        <button onclick="simulateOfficerLedger()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
+                            <i class="fa-solid fa-file-invoice"></i>
+                            <span>View Farmer Ledger</span>
+                        </button>
+                        <button onclick="simulateGatePass()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
+                            <i class="fa-solid fa-barcode"></i>
+                            <span>Verify Token Pass</span>
+                        </button>
+                    `;
+
+                    widgetTitle.textContent = "Mandi Station Operations Summary";
+                    widgetContent.innerHTML = `
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                            <div class="p-2 bg-white rounded-lg border border-slate-200">
+                                <span class="text-[11px] text-slate-500 block">Total Slots</span>
+                                <span class="font-extrabold text-slate-800 text-base">142</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border border-slate-200">
+                                <span class="text-[11px] text-slate-500 block">Verified Today</span>
+                                <span class="font-extrabold text-emerald-600 text-base">89</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border border-slate-200">
+                                <span class="text-[11px] text-slate-500 block">Procured (MT)</span>
+                                <span class="font-extrabold text-amber-600 text-base">1,240</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border border-slate-200">
+                                <span class="text-[11px] text-slate-500 block">Pending Gate</span>
+                                <span class="font-extrabold text-indigo-600 text-base">12</span>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                if (data.createdAt) {
+                    const dateObj = new Date(data.createdAt);
+                    dashCreatedTime.textContent = dateObj.toLocaleDateString('en-IN', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+
+            } catch (error) {
+                console.error("Error reading profile document from Firestore:", error);
+                showToast(`Firestore Read Note: ${error.message}`, 'info');
+            }
+        }
+
+        // Dashboard Action Helpers
+        window.simulateSlotBooking = function() {
+            showToast("Slot booking system synced! Picked next available window: Tomorrow, 9:00 AM.", "success");
+        };
+
+        window.checkMandiPrices = function() {
+            showToast("Wheat MSP set at ₹2,275/quintal | Paddy Grade A set at ₹2,203/quintal.", "info");
+        };
+
+        window.simulateOfficerLedger = function() {
+            showToast("Procurement Ledger loaded for current shift. 89 entries verified.", "info");
+        };
+
+        window.simulateGatePass = function() {
+            showToast("Token scanner active. Waiting for farmer QR verification...", "info");
+        };
+
+        // Function: Toast Notification Generator
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-start space-x-3 p-4 rounded-xl shadow-xl border text-xs sm:text-sm font-medium transition-all transform translate-y-2 opacity-0 duration-300`;
+
+            let iconClass = 'fa-info-circle text-blue-500';
+            let bgClass = 'bg-white border-slate-200 text-slate-800';
+
+            if (type === 'success') {
+                iconClass = 'fa-circle-check text-emerald-500';
+                bgClass = 'bg-emerald-950 text-emerald-100 border-emerald-800';
+            } else if (type === 'error') {
+                iconClass = 'fa-triangle-exclamation text-rose-500';
+                bgClass = 'bg-slate-900 text-rose-200 border-rose-900';
+            } else if (type === 'info') {
+                iconClass = 'fa-circle-info text-amber-500';
+                bgClass = 'bg-slate-900 text-amber-100 border-amber-900/60';
+            }
+
+            toast.className += ` ${bgClass}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${iconClass} text-base mt-0.5 shrink-0"></i>
+                <div class="flex-1 leading-snug">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white ml-2">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            // Trigger animation
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Auto dismiss after 4.5s
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 4500);
+        };
+
+        // Attach header logout button handler
+        const headerLogoutBtn = document.getElementById('headerLogoutBtn');
+        if (headerLogoutBtn) {
+            headerLogoutBtn.addEventListener('click', signOutUser);
+        }
+    </script>
+</body>
+</html>

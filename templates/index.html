@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MandiMitra — Procurement Centre & E-Token</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; }
+    .modal-backdrop { animation: fadeIn .18s ease-out; }
+    .modal-card { animation: popIn .18s ease-out; }
+    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes popIn { from { opacity: 0; transform: scale(.97) translateY(5px) } to { opacity: 1; transform: scale(1) translateY(0) } }
+  </style>
+</head>
+
+<body class="bg-stone-50 text-stone-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+
+  <!-- Top Navigation -->
+  <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <a href="#" class="flex items-center gap-3 group">
+          <div>
+            <span class="font-extrabold text-xl tracking-tight text-stone-900">
+              Mandi<span class="text-emerald-700">Mitra</span>
+            </span>
+          </div>
+        </a>
+
+        <div class="flex items-center gap-3 sm:gap-4">
+          <button onclick="openLoginModal() " class="bg-stone-900 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5">
+            Login / Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="relative pt-14 pb-20 lg:pt-20 lg:pb-28 overflow-hidden">
+    <div class="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-100/70 via-stone-50 to-stone-50 pointer-events-none"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-stone-900 mb-6 leading-tight">
+        Fair, Fast & Reliable Transparent <br class="hidden sm:inline">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600">
+          Mandi Yard Gate Regulation
+        </span>
+      </h1>
+
+      <p class="text-base sm:text-xl text-stone-600 max-w-2xl mx-auto mb-9 leading-relaxed font-normal">
+        MandiMitra eliminates overnight tractor queues outside APMC mandis. Locate nearby centres with the lowest rush, check active weighbridge scales, and book verified gate slots.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+        <button onclick="openLoginModal()" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-7 py-3.5 rounded-xl font-bold transition-all shadow-md shadow-emerald-700/25 hover:-translate-y-0.5">
+          🔒 Login to Book E-Token
+        </button>
+        <a href="#nearby-centres" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white border border-stone-300 hover:border-emerald-600 text-stone-800 hover:text-emerald-700 px-7 py-3.5 rounded-xl font-semibold transition-all shadow-sm hover:-translate-y-0.5">
+          📍 Explore Nearby Centres
+        </a>
+      </div>
+
+      <div class="mt-12 pt-8 border-t border-stone-200 grid grid-cols-2 md:grid-cols-4 gap-4 text-center max-w-3xl mx-auto">
+        <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-emerald-300 transition-colors">
+          <p class="text-2xl font-black text-stone-900">&lt; 18 min</p>
+          <p class="text-xs text-stone-500 font-medium mt-0.5">Weighbridge Turnaround</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-emerald-300 transition-colors">
+          <p class="text-2xl font-black text-emerald-700">12% Max</p>
+          <p class="text-xs text-stone-500 font-medium mt-0.5">Moisture Limit Benchmark</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-emerald-300 transition-colors">
+          <p class="text-2xl font-black text-stone-900">FIFO Order</p>
+          <p class="text-xs text-stone-500 font-medium mt-0.5">Sensor-Enforced Tokens</p>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-emerald-300 transition-colors">
+          <p class="text-2xl font-black text-stone-900 flex items-center justify-center gap-1">
+            4.8 / 5 <span>★</span>
+          </p>
+          <p class="text-xs text-stone-500 font-medium mt-0.5">Verified Farmer Reviews</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Commodity MSP Bar -->
+  <section class="bg-stone-900 text-white py-5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span class="text-xs uppercase font-bold tracking-wider text-stone-400">Current Procurements:</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-8 text-center sm:text-left w-full md:w-auto">
+          <div class="border-l border-stone-800 pl-3">
+            <span class="text-xs text-stone-400 block">Wheat (FAQ)</span>
+            <span class="text-sm font-bold text-emerald-400">₹2,275 / Qtl</span>
+          </div>
+          <div class="border-l border-stone-800 pl-3">
+            <span class="text-xs text-stone-400 block">Chana (Bengal Gram)</span>
+            <span class="text-sm font-bold text-emerald-400">₹5,440 / Qtl</span>
+          </div>
+          <div class="border-l border-stone-800 pl-3">
+            <span class="text-xs text-stone-400 block">Mustard Seed</span>
+            <span class="text-sm font-bold text-emerald-400">₹5,650 / Qtl</span>
+          </div>
+          <div class="border-l border-stone-800 pl-3">
+            <span class="text-xs text-stone-400 block">Paddy (Common)</span>
+            <span class="text-sm font-bold text-emerald-400">₹2,183 / Qtl</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Nearby Centres -->
+  <section id="nearby-centres" class="py-20 bg-stone-100 border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">Centre Locator & Telemetry</span>
+          <h2 class="text-2xl sm:text-3xl font-bold text-stone-900 mt-2">Nearby Procurement Centres & Yard Status</h2>
+          <p class="text-stone-600 text-sm mt-1">Compare estimated wait times, live vehicle queues, active scales, and verified farmer reviews before you head out.</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <input id="searchQuery" type="text" placeholder="Search district or mandi..."
+              oninput="renderCentres()"
+              class="px-3.5 py-2 pl-9 text-xs sm:text-sm bg-white border border-stone-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-600 w-56 sm:w-64">
+            <span class="absolute left-3 top-2.5 text-stone-400">⌕</span>
+          </div>
+          <button onclick="detectLocation()" class="bg-white hover:bg-stone-50 border border-stone-300 text-stone-700 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5 transition-colors shadow-sm">
+            📍 <span class="hidden sm:inline">Near Me</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 mb-8">
+        <button data-filter="all" onclick="setFilter('all')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white">All Nearby (2)</button>
+        <button data-filter="fast" onclick="setFilter('fast')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-stone-300 text-stone-700 hover:border-emerald-600">Wait &lt; 30 Mins</button>
+        <button data-filter="wheat" onclick="setFilter('wheat')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-stone-300 text-stone-700 hover:border-emerald-600">Wheat FAQ Active</button>
+        <button data-filter="mustard" onclick="setFilter('mustard')" class="filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-stone-300 text-stone-700 hover:border-emerald-600">Mustard Only</button>
+      </div>
+
+      <div id="centreGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
+    </div>
+  </section>
+
+  <!-- Workflow -->
+  <section class="py-20 bg-white border-b border-stone-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200">The Workflow</span>
+        <h2 class="text-3xl font-bold tracking-tight text-stone-900 mt-2">Eliminating Manual Gate Passes</h2>
+        <p class="text-stone-600 mt-2">A completely digital four-tier verification chain from the village gate to the unloading platform.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200 shadow-sm hover:-translate-y-1 transition-transform">
+          <div class="w-12 h-12 bg-emerald-100 text-emerald-800 font-black rounded-xl flex items-center justify-center mb-4 text-xl">1</div>
+          <h3 class="font-bold text-stone-900 mb-2">Slot Registration</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">Farmers log in with their verified Kisan ID, enter tractor details, and book a staging window from home.</p>
+        </div>
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200 shadow-sm hover:-translate-y-1 transition-transform">
+          <div class="w-12 h-12 bg-blue-100 text-blue-800 font-black rounded-xl flex items-center justify-center mb-4 text-xl">2</div>
+          <h3 class="font-bold text-stone-900 mb-2">Moisture Clearance</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">Upon arrival, grain samples are digitally measured. Lots passing the 12% limit proceed instantly.</p>
+        </div>
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200 shadow-sm hover:-translate-y-1 transition-transform">
+          <div class="w-12 h-12 bg-amber-100 text-amber-800 font-black rounded-xl flex items-center justify-center mb-4 text-xl">3</div>
+          <h3 class="font-bold text-stone-900 mb-2">Automated Weighing</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">Gross vehicle weight is captured straight from the weighbridge sensor to the APMC ledger, halting tampering.</p>
+        </div>
+        <div class="bg-stone-50 p-6 rounded-2xl border border-stone-200 shadow-sm hover:-translate-y-1 transition-transform">
+          <div class="w-12 h-12 bg-purple-100 text-purple-800 font-black rounded-xl flex items-center justify-center mb-4 text-xl">4</div>
+          <h3 class="font-bold text-stone-900 mb-2">J-Form Settlement</h3>
+          <p class="text-sm text-stone-600 leading-relaxed">The electronic J-Form is sent via SMS after tare weighing, initiating Direct Bank Transfer (DBT).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20 bg-stone-50 border-b border-stone-200">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-stone-900">Frequently Asked Questions</h2>
+        <p class="text-stone-500 mt-2">Clear answers regarding gate operations, tokens, and farmer rights.</p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="border border-stone-200 rounded-2xl bg-white overflow-hidden shadow-sm">
+          <button onclick="toggleFaq(0)" class="w-full flex justify-between items-center p-5 text-left hover:bg-stone-50 transition-colors">
+            <span class="font-bold text-stone-900">Why do I need to login to generate a token?</span>
+            <span id="faqIcon0" class="text-xl text-emerald-600 transition-transform">›</span>
+          </button>
+          <div id="faq0" class="hidden bg-stone-50/50 px-5 border-t border-stone-100">
+            <p class="py-4 text-sm text-stone-600 leading-relaxed">Logging in connects your MandiMitra account to your verified Kisan Registration ID. This prevents middlemen from hoarding slots and guarantees your direct bank transfer.</p>
+          </div>
+        </div>
+
+        <div class="border border-stone-200 rounded-2xl bg-white overflow-hidden shadow-sm">
+          <button onclick="toggleFaq(1)" class="w-full flex justify-between items-center p-5 text-left hover:bg-stone-50 transition-colors">
+            <span class="font-bold text-stone-900">How do I choose the best mandi among nearby centres?</span>
+            <span id="faqIcon1" class="text-xl text-emerald-600 transition-transform">›</span>
+          </button>
+          <div id="faq1" class="hidden bg-stone-50/50 px-5 border-t border-stone-100">
+            <p class="py-4 text-sm text-stone-600 leading-relaxed">Check the 'Est. Wait Time' and 'Active Scales' badges above. Secondary sub-yards often have zero queue, saving you up to 2 hours of waiting.</p>
+          </div>
+        </div>
+
+        <div class="border border-stone-200 rounded-2xl bg-white overflow-hidden shadow-sm">
+          <button onclick="toggleFaq(2)" class="w-full flex justify-between items-center p-5 text-left hover:bg-stone-50 transition-colors">
+            <span class="font-bold text-stone-900">What happens if my tractor breaks down and I miss my slot?</span>
+            <span id="faqIcon2" class="text-xl text-emerald-600 transition-transform">›</span>
+          </button>
+          <div id="faq2" class="hidden bg-stone-50/50 px-5 border-t border-stone-100">
+            <p class="py-4 text-sm text-stone-600 leading-relaxed">MandiMitra provides a 45-minute grace period. If you miss your window, your token shifts into the standby queue and clears during the next gap without requiring a re-booking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="hidden fixed inset-0 z-[100] bg-stone-900/60 backdrop-blur-sm items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-7 shadow-2xl border border-stone-200 relative modal-card">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 bg-stone-100 rounded-full w-8 h-8">✕</button>
+      <div class="text-center mb-6 pt-2">
+        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">🛡</div>
+        <h3 class="text-xl font-bold text-stone-900">Login to Continue</h3>
+      </div>
+      <div class="space-y-3">
+        <button 
+    type="button"
+    onclick="proceedToLogin()"
+    class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3 rounded-xl transition-all shadow-md text-sm">
+    Proceed
+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="hidden fixed inset-0 z-[100] bg-stone-900/60 backdrop-blur-sm items-center justify-center p-4 modal-backdrop">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-stone-200 relative modal-card">
+      <button onclick="closeReviewModal()" class="absolute top-4 right-4 text-stone-400 hover:text-stone-700 bg-stone-100 rounded-full w-8 h-8">✕</button>
+      <div class="mb-5">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-xl text-amber-500">★</span>
+          <span id="reviewRating" class="font-extrabold text-xl text-stone-900"></span>
+          <span id="reviewCount" class="text-xs text-stone-400"></span>
+        </div>
+        <h3 id="reviewCentre" class="font-bold text-lg text-stone-900"></h3>
+      </div>
+      <div id="reviewList" class="space-y-3 mb-6"></div>
+      <button onclick="closeReviewModal()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold py-2.5 rounded-xl text-xs transition-colors">
+        Close Feedback
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-stone-200 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-stone-500">
+      <div class="flex items-center gap-2">
+        <span class="w-6 h-6 bg-emerald-700 text-white rounded flex items-center justify-center font-bold text-xs">M</span>
+        <span class="font-bold text-stone-900">MandiMitra</span>
+      </div>
+      <div>Designed for SIH 2026 Open Source Track</div>
+    </div>
+  </footer>
+
+<script>
+const centres = [
+  {
+    crop: 'wheat',
+    wait: 14,
+    search: 'Karnal APMC Central Yard Karnal Sector 4 GT Road wheat',
+    name: 'Karnal APMC Central Yard',
+    badge: 'Best Pick',
+    badgeClass: 'bg-emerald-100 text-emerald-800',
+    location: 'Sector 4, GT Road',
+    distance: '11.4 km away (~22 min drive)',
+    rating: '4.8',
+    count: '142',
+    queue: '12 Tractors',
+    scales: '2 of 2 Open',
+    tag: '🌾 Wheat (FAQ)',
+    status: '✓ Digital Lab',
+    statusClass: 'bg-emerald-50 text-emerald-800',
+    waitClass: 'text-emerald-700',
+    reviews: [
+      'Very swift moisture assay at Gate 1.',
+      'Computer scale matches our farm slip exactly.',
+      'Ample drinking water and shade for drivers.'
+    ]
+  },
+  {
+    crop: 'mustard',
+    wait: 38,
+    search: 'Najafgarh APMC Sub-Yard Najafgarh Delhi mustard',
+    name: 'Najafgarh APMC Sub-Yard',
+    badge: 'Moderate Rush',
+    badgeClass: 'bg-amber-100 text-amber-800',
+    location: 'Najafgarh, Delhi',
+    distance: '18.6 km away (~40 min drive)',
+    rating: '4.4',
+    count: '98',
+    queue: '38 Tractors',
+    scales: '1 of 2 Open',
+    tag: '🟡 Mustard (RM)',
+    status: '⚠️ Scale 2 Calibrating',
+    statusClass: 'bg-amber-50 text-amber-800',
+    waitClass: 'text-amber-600',
+    reviews: [
+      'Good setup for mustard and bajra.',
+      'Weighbridge 2 was briefly recalibrating, small delay.'
+    ]
+  }
+];
+
+let activeFilter = 'all';
+
+function openLoginModal() {
+  const m = document.getElementById('loginModal');
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+}
+
+function closeLoginModal() {
+  const m = document.getElementById('loginModal');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
+}
+
+function proceedToLogin() {
+    window.location.href = "{{ url_for('auth') }}";
+}
+
+
+function openReviewModal(centre) {
+  document.getElementById('reviewRating').textContent = centre.rating;
+  document.getElementById('reviewCount').textContent = '(' + centre.count + ' verified reviews)';
+  document.getElementById('reviewCentre').textContent = centre.name;
+
+  document.getElementById('reviewList').innerHTML = centre.reviews.map(r =>
+    `<div class="bg-stone-50 p-3.5 rounded-xl border border-stone-200 text-xs text-stone-700 leading-relaxed">"${escapeHtml(r)}"</div>`
+  ).join('');
+
+  const m = document.getElementById('reviewModal');
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+}
+
+function closeReviewModal() {
+  const m = document.getElementById('reviewModal');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
+}
+
+function setFilter(filter) {
+  activeFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const active = btn.dataset.filter === filter;
+    btn.className = active
+      ? 'filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-700 text-white'
+      : 'filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-stone-300 text-stone-700 hover:border-emerald-600';
+  });
+  renderCentres();
+}
+
+function renderCentres() {
+  const query = document.getElementById('searchQuery').value.toLowerCase().trim();
+  const grid = document.getElementById('centreGrid');
+
+  const visible = centres.filter(c => {
+    if (activeFilter === 'fast' && c.wait > 30) return false;
+    if (activeFilter !== 'all' && activeFilter !== 'fast' && c.crop !== activeFilter) return false;
+    if (query && !c.search.toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  if (!visible.length) {
+    grid.innerHTML = `<div class="lg:col-span-2 bg-white rounded-2xl border border-stone-200 p-8 text-center text-stone-500">No procurement centre matches your search/filter.</div>`;
+    return;
+  }
+
+  grid.innerHTML = visible.map(c => `
+    <div class="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all">
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <h3 class="font-bold text-lg text-stone-900">${escapeHtml(c.name)}</h3>
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${c.badgeClass}">${c.badge}</span>
+          </div>
+          <p class="text-xs text-stone-500 mt-0.5">${escapeHtml(c.location)} • <span class="text-emerald-700 font-semibold font-mono">${escapeHtml(c.distance)}</span></p>
+        </div>
+
+        <button onclick='openReviewModal(${JSON.stringify(c)})' class="inline-flex items-center gap-1.5 bg-stone-50 hover:bg-stone-100 px-3 py-1.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-800 transition-colors">
+          <span class="text-amber-500">★</span> ${c.rating}
+          <span class="text-stone-400 font-normal">(${c.count})</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 bg-stone-50 p-3 rounded-2xl border border-stone-100 mb-4 text-center">
+        <div class="border-r border-stone-200">
+          <span class="text-[11px] text-stone-500 font-medium block">Est. Wait Time</span>
+          <span class="text-base font-extrabold ${c.waitClass}">~${c.wait} min</span>
+        </div>
+        <div class="border-r border-stone-200">
+          <span class="text-[11px] text-stone-500 font-medium block">Vehicles in Queue</span>
+          <span class="text-base font-extrabold text-stone-800">${c.queue}</span>
+        </div>
+        <div>
+          <span class="text-[11px] text-stone-500 font-medium block">Active Scales</span>
+          <span class="text-base font-extrabold text-stone-800">${c.scales}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center justify-between gap-3 text-xs pt-2 border-t border-stone-100">
+        <div class="flex flex-wrap gap-1.5">
+          <span class="bg-stone-100 text-stone-700 px-2 py-0.5 rounded-md font-medium">${c.tag}</span>
+          <span class="${c.statusClass} px-2 py-0.5 rounded-md font-medium">${c.status}</span>
+        </div>
+        <button onclick="openLoginModal()" class="text-emerald-700 hover:text-emerald-800 font-bold flex items-center gap-1">
+          Select & Book <span>→</span>
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function detectLocation() {
+  const input = document.getElementById('searchQuery');
+  input.value = 'Detecting GPS...';
+  setTimeout(() => {
+    input.value = 'Karnal / Panipat Zone';
+    renderCentres();
+  }, 700);
+}
+
+function toggleFaq(index) {
+  const panel = document.getElementById('faq' + index);
+  const icon = document.getElementById('faqIcon' + index);
+  panel.classList.toggle('hidden');
+  icon.classList.toggle('rotate-90');
+}
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, function(m) {
+    return ({
+      '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+    })[m];
+  });
+}
+
+document.getElementById('loginModal').addEventListener('click', function(e) {
+  if (e.target === this) closeLoginModal();
+});
+
+document.getElementById('reviewModal').addEventListener('click', function(e) {
+  if (e.target === this) closeReviewModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeLoginModal();
+    closeReviewModal();
+  }
+});
+
+renderCentres();
+</script>
+</body>
+</html>
