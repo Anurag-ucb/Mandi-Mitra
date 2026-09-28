@@ -3,9 +3,7 @@ https://flask-python-boilerplate-two-sage.vercel.app/
 
 This example shows how to use Flask on Vercel with Serverless Functions using the [Python Runtime](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python).
 
-## Demo
 
-https://vercel-plus-flask.vercel.app/
 
 ## How it Works
 
