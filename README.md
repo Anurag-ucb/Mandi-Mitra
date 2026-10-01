@@ -15,5 +15,5 @@ uv sync  # or alternatively pip install flask gunicorn
 gunicorn main:app
 ```
 
-Your Flask application is now available at `http://localhost:3000`.
+Your application is now available at `http://localhost:3000`.
 
