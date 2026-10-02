@@ -1,18 +1,17 @@
 import os
-import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "kisan-seva-secret-key"
-
-# Ensure absolute path to database.db relative to main.py
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE = os.path.join(BASE_DIR, "database.db")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "kisan-seva-secret-key")
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 def get_db():
-    # Use uri=True and mode=ro for read-only access on Vercel
-    conn = sqlite3.connect(f"file:{DATABASE}?mode=ro", uri=True)
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
     return conn
 
 
@@ -36,21 +35,20 @@ def auth():
             return redirect(url_for("auth"))
 
         conn = get_db()
+        cur = conn.cursor()
 
-        farmer = conn.execute(
-            """
-            SELECT * FROM farmers
-            WHERE phone = ? AND password = ?
-            """,
+        cur.execute(
+            "SELECT * FROM farmers WHERE phone = %s AND password = %s",
             (phone, password)
-        ).fetchone()
+        )
+        farmer = cur.fetchone()
 
+        cur.close()
         conn.close()
 
         if farmer:
             session["farmer_id"] = farmer["id"]
             session["farmer_name"] = farmer["name"]
-
             return redirect(url_for("farmer_dashboard"))
 
         flash("Invalid phone number or password.", "error")
@@ -73,26 +71,27 @@ def signup():
         return redirect(url_for("auth"))
 
     conn = get_db()
+    cur = conn.cursor()
 
-    existing = conn.execute(
-        "SELECT id FROM farmers WHERE phone = ?",
-        (phone,)
-    ).fetchone()
+    cur.execute("SELECT id FROM farmers WHERE phone = %s", (phone,))
+    existing = cur.fetchone()
 
     if existing:
+        cur.close()
         conn.close()
         flash("Phone number already registered.", "error")
         return redirect(url_for("auth"))
 
-    conn.execute(
+    cur.execute(
         """
         INSERT INTO farmers (name, phone, village, password)
-        VALUES (?, ?, ?, ?)
+        VALUES (%s, %s, %s, %s)
         """,
         (name, phone, village, password)
     )
 
     conn.commit()
+    cur.close()
     conn.close()
 
     flash("Account created successfully. Please login.", "success")
@@ -103,137 +102,102 @@ def signup():
 
 @app.route("/farmer_dashboard", methods=["GET"])
 def farmer_dashboard():
-
     if "farmer_id" not in session:
         return redirect(url_for("auth"))
 
     conn = get_db()
+    cur = conn.cursor()
 
-    farmer = conn.execute(
-        "SELECT * FROM farmers WHERE id = ?",
-        (session["farmer_id"],)
-    ).fetchone()
+    cur.execute("SELECT * FROM farmers WHERE id = %s", (session["farmer_id"],))
+    farmer = cur.fetchone()
 
-    bookings = conn.execute(
+    cur.execute(
         """
-        SELECT bookings.*, crops.name AS crop_name,
-               centres.name AS centre_name
+        SELECT bookings.*, crops.name AS crop_name, centres.name AS centre_name
         FROM bookings
         JOIN crops ON bookings.crop_id = crops.id
         JOIN centres ON bookings.centre_id = centres.id
-        WHERE bookings.farmer_id = ?
+        WHERE bookings.farmer_id = %s
         ORDER BY bookings.id DESC
         """,
         (session["farmer_id"],)
-    ).fetchall()
+    )
+    bookings = cur.fetchall()
 
+    cur.close()
     conn.close()
 
-    return render_template(
-        "farmer_dashboard.html",
-        farmer=farmer,
-        bookings=bookings
-    )
+    return render_template("farmer_dashboard.html", farmer=farmer, bookings=bookings)
 
 
 # ---------------- FARMER BOOKING ----------------
 
 @app.route("/farmer/booking", methods=["GET", "POST"])
 def farmer_booking():
-
     if "farmer_id" not in session:
         return redirect(url_for("auth"))
 
     conn = get_db()
+    cur = conn.cursor()
 
     if request.method == "POST":
-
         crop_id = request.form.get("crop_id")
         weight = request.form.get("weight")
         centre_id = request.form.get("centre_id")
 
         if not crop_id or not weight or not centre_id:
+            cur.close()
             conn.close()
             flash("Please complete all booking details.", "error")
             return redirect(url_for("farmer_booking"))
 
-        # Get next serial number for this centre
-        last_token = conn.execute(
-            """
-            SELECT MAX(token_number)
-            FROM bookings
-            WHERE centre_id = ?
-            """,
+        cur.execute(
+            "SELECT COALESCE(MAX(token_number), 0) AS max_token FROM bookings WHERE centre_id = %s",
             (centre_id,)
-        ).fetchone()[0]
+        )
+        last_token = cur.fetchone()["max_token"]
+        token_number = last_token + 1
 
-        token_number = (last_token or 0) + 1
-
-        conn.execute(
+        cur.execute(
             """
-            INSERT INTO bookings
-            (
-                farmer_id,
-                crop_id,
-                weight,
-                centre_id,
-                token_number,
-                status
-            )
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO bookings (farmer_id, crop_id, weight, centre_id, token_number, status)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id
             """,
-            (
-                session["farmer_id"],
-                crop_id,
-                weight,
-                centre_id,
-                token_number,
-                "Waiting"
-            )
+            (session["farmer_id"], crop_id, weight, centre_id, token_number, "Waiting")
         )
 
-        booking_id = conn.execute(
-            "SELECT last_insert_rowid()"
-        ).fetchone()[0]
+        booking_id = cur.fetchone()["id"]
 
         conn.commit()
+        cur.close()
         conn.close()
 
-        return redirect(
-            url_for(
-                "farmer_token",
-                booking_id=booking_id
-            )
-        )
+        return redirect(url_for("farmer_token", booking_id=booking_id))
 
-    crops = conn.execute(
-        "SELECT * FROM crops"
-    ).fetchall()
+    cur.execute("SELECT * FROM crops")
+    crops = cur.fetchall()
 
-    centres = conn.execute(
-        "SELECT * FROM centres"
-    ).fetchall()
+    cur.execute("SELECT * FROM centres")
+    centres = cur.fetchall()
 
+    cur.close()
     conn.close()
 
-    return render_template(
-        "farmer_booking.html",
-        crops=crops,
-        centres=centres
-    )
+    return render_template("farmer_booking.html", crops=crops, centres=centres)
 
 
 # ---------------- TOKEN ----------------
 
 @app.route("/farmer/token/<int:booking_id>")
 def farmer_token(booking_id):
-
     if "farmer_id" not in session:
         return redirect(url_for("auth"))
 
     conn = get_db()
+    cur = conn.cursor()
 
-    booking = conn.execute(
+    cur.execute(
         """
         SELECT bookings.*,
                crops.name AS crop_name,
@@ -242,21 +206,19 @@ def farmer_token(booking_id):
         FROM bookings
         JOIN crops ON bookings.crop_id = crops.id
         JOIN centres ON bookings.centre_id = centres.id
-        WHERE bookings.id = ?
-        AND bookings.farmer_id = ?
+        WHERE bookings.id = %s AND bookings.farmer_id = %s
         """,
         (booking_id, session["farmer_id"])
-    ).fetchone()
+    )
+    booking = cur.fetchone()
 
+    cur.close()
     conn.close()
 
     if not booking:
         return "Booking not found", 404
 
-    return render_template(
-        "farmer_token.html",
-        booking=booking
-    )
+    return render_template("farmer_token.html", booking=booking)
 
 
 # ---------------- LOGOUT ----------------
@@ -271,28 +233,25 @@ def logout():
 
 @app.route("/centre/login", methods=["GET", "POST"])
 def centre_login():
-
     if request.method == "POST":
-
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "").strip()
 
         conn = get_db()
+        cur = conn.cursor()
 
-        centre = conn.execute(
-            """
-            SELECT * FROM centres
-            WHERE username = ? AND password = ?
-            """,
+        cur.execute(
+            "SELECT * FROM centres WHERE username = %s AND password = %s",
             (username, password)
-        ).fetchone()
+        )
+        centre = cur.fetchone()
 
+        cur.close()
         conn.close()
 
         if centre:
             session["centre_id"] = centre["id"]
             session["centre_name"] = centre["name"]
-
             return redirect(url_for("centre_dashboard"))
 
         flash("Invalid centre credentials.", "error")
@@ -304,21 +263,16 @@ def centre_login():
 
 @app.route("/centre/dashboard")
 def centre_dashboard():
-
     if "centre_id" not in session:
         return redirect(url_for("centre_login"))
 
     conn = get_db()
+    cur = conn.cursor()
 
-    centre = conn.execute(
-        """
-        SELECT * FROM centres
-        WHERE id = ?
-        """,
-        (session["centre_id"],)
-    ).fetchone()
+    cur.execute("SELECT * FROM centres WHERE id = %s", (session["centre_id"],))
+    centre = cur.fetchone()
 
-    tokens = conn.execute(
+    cur.execute(
         """
         SELECT bookings.*,
                farmers.name AS farmer_name,
@@ -328,32 +282,30 @@ def centre_dashboard():
         FROM bookings
         JOIN farmers ON bookings.farmer_id = farmers.id
         JOIN crops ON bookings.crop_id = crops.id
-        WHERE bookings.centre_id = ?
+        WHERE bookings.centre_id = %s
         ORDER BY bookings.token_number ASC
         """,
         (session["centre_id"],)
-    ).fetchall()
+    )
+    tokens = cur.fetchall()
 
+    cur.close()
     conn.close()
 
-    return render_template(
-        "centre_dashboard.html",
-        centre=centre,
-        tokens=tokens
-    )
+    return render_template("centre_dashboard.html", centre=centre, tokens=tokens)
 
 
 # ---------------- PROCESS TOKEN ----------------
 
 @app.route("/centre/process/<int:booking_id>", methods=["GET", "POST"])
 def centre_process(booking_id):
-
     if "centre_id" not in session:
         return redirect(url_for("centre_login"))
 
     conn = get_db()
+    cur = conn.cursor()
 
-    booking = conn.execute(
+    cur.execute(
         """
         SELECT bookings.*,
                farmers.name AS farmer_name,
@@ -364,63 +316,46 @@ def centre_process(booking_id):
         JOIN farmers ON bookings.farmer_id = farmers.id
         JOIN crops ON bookings.crop_id = crops.id
         JOIN centres ON bookings.centre_id = centres.id
-        WHERE bookings.id = ?
-        AND bookings.centre_id = ?
+        WHERE bookings.id = %s AND bookings.centre_id = %s
         """,
         (booking_id, session["centre_id"])
-    ).fetchone()
+    )
+    booking = cur.fetchone()
 
     if not booking:
+        cur.close()
         conn.close()
         return "Token not found", 404
 
     if request.method == "POST":
-
         status = request.form.get("status")
-
-        allowed_statuses = [
-            "Waiting",
-            "Called",
-            "Processing",
-            "Completed",
-            "Rejected"
-        ]
+        allowed_statuses = ["Waiting", "Called", "Processing", "Completed", "Rejected"]
 
         if status not in allowed_statuses:
+            cur.close()
             conn.close()
             flash("Invalid status.", "error")
-            return redirect(
-                url_for(
-                    "centre_process",
-                    booking_id=booking_id
-                )
-            )
+            return redirect(url_for("centre_process", booking_id=booking_id))
 
-        conn.execute(
+        cur.execute(
             """
             UPDATE bookings
-            SET status = ?
-            WHERE id = ?
-            AND centre_id = ?
+            SET status = %s
+            WHERE id = %s AND centre_id = %s
             """,
-            (
-                status,
-                booking_id,
-                session["centre_id"]
-            )
+            (status, booking_id, session["centre_id"])
         )
 
         conn.commit()
+        cur.close()
         conn.close()
 
         return redirect(url_for("centre_dashboard"))
 
+    cur.close()
     conn.close()
 
-    return render_template(
-        "centre_process.html",
-        booking=booking
-    )
+    return render_template("centre_process.html", booking=booking)
 
 
 if __name__ == "__main__":
