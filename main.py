@@ -5,27 +5,34 @@ from psycopg2 import Error as DBError
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from dotenv import load_dotenv
 
+# Load environment variables from .env file (for local development)
 load_dotenv()
 
 app = Flask(__name__)
 
 # ============ CONFIGURATION ============
-# Fix 1: Proper SECRET_KEY configuration
+
+# ✅ CORRECT WAY: Read environment variable by NAME, not value
+# This reads the env var named "DATABASE_URL"
+DATABASE_URL = os.getenv("postgresql://postgres:anurag%40ucb@db.fbcfrclbdgmqkumdnddg.supabase.co:5432/postgres")
+if not DATABASE_URL:
+    raise ValueError(
+        "DATABASE_URL environment variable not set!\n"
+        "For Vercel: Add it in Settings → Environment Variables\n"
+        "For local: Create .env file with: DATABASE_URL=postgresql://..."
+    )
+
+# ✅ CORRECT SECRET_KEY configuration
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
-    # Use a default for development only
-    SECRET_KEY = "kisan-seva-secret-key-dev"
     if os.getenv("ENVIRONMENT") == "production":
-        raise ValueError("SECRET_KEY environment variable must be set in production!")
+        raise ValueError("SECRET_KEY must be set in production!")
+    # Only for development
+    SECRET_KEY = "dev-secret-key-change-in-production"
 
 app.secret_key = SECRET_KEY
 
-# Fix 2: Get DATABASE_URL from environment variables (Vercel will inject this)
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set!")
 
-# Fix 3: Add connection pool and error handling
 def get_db():
     """Get database connection with error handling"""
     try:
@@ -43,11 +50,11 @@ def index():
     return render_template("index.html")
 
 
-# ============ HEALTH CHECK (for Vercel monitoring) ============
+# ============ HEALTH CHECK ============
 
 @app.route("/api/health")
 def health_check():
-    """Health check endpoint for monitoring"""
+    """Health check endpoint - verify database connectivity"""
     try:
         conn = get_db()
         cur = conn.cursor()
@@ -92,7 +99,6 @@ def auth():
             flash("Invalid phone number or password.", "error")
         except DBError as e:
             flash(f"Database error: {str(e)}", "error")
-            return redirect(url_for("auth"))
 
         return redirect(url_for("auth"))
 
@@ -241,7 +247,7 @@ def farmer_booking():
         return redirect(url_for("farmer_dashboard"))
 
 
-# ============ TOKEN ============
+# ============ FARMER TOKEN ============
 
 @app.route("/farmer/token/<int:booking_id>")
 def farmer_token(booking_id):
@@ -439,7 +445,9 @@ def server_error(error):
 
 
 # ============ MAIN ============
-# Fix 4: Remove debug=True for production, let Vercel handle it
+
 if __name__ == "__main__":
-    # Only for local development
-    app.run(debug=os.getenv("FLASK_ENV") == "development", host="0.0.0.0", port=int(os.getenv("PORT", 3000)))
+    # Only debug=True for local development
+    debug_mode = os.getenv("FLASK_ENV") == "development"
+    port = int(os.getenv("PORT", 3000))
+    app.run(debug=debug_mode, host="0.0.0.0", port=port)
