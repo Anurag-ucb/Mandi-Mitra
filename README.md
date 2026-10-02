@@ -1,4 +1,4 @@
-https://mandii-mitra.vercel.app/
+https://mandii.vercel.app/
 
 
 ## How it Works
