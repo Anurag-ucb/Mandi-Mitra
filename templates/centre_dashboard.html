@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MandiMitra | Officer Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen" style="font-family:Inter,system-ui,sans-serif">
+<nav class="sticky top-0 z-50 bg-slate-950/95 backdrop-blur border-b border-slate-800">
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+  <a class="font-extrabold text-xl">Mandi<span class="text-indigo-400">Mitra</span></a>
+  <div class="flex items-center gap-3">
+   <span class="hidden sm:inline-flex px-3 py-1 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 text-xs font-bold">PROCUREMENT OFFICER</span>
+   <div id="avatar" class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center font-bold">O</div>
+   <button id="logoutBtn" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-300 hover:bg-slate-800"><i class="fa-solid fa-right-from-bracket mr-1"></i>Logout</button>
+  </div>
+ </div>
+</nav>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+ <div class="mb-7"><p class="text-sm text-indigo-400 font-bold">MANDI OPERATIONS CONSOLE</p><h1 class="text-3xl sm:text-4xl font-extrabold mt-1">Good evening, <span id="name">Officer</span></h1><p class="text-slate-400 mt-2"><span id="centre">Procurement Centre</span> · <span id="district">District</span></p></div>
+ <div id="loading" class="rounded-2xl bg-slate-900 border border-slate-800 p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading station data...</div>
+ <div id="dashboard" class="hidden">
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+   <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5"><p class="text-xs uppercase font-bold text-slate-500">Total Bookings</p><p id="total" class="text-3xl font-extrabold mt-2">0</p></div>
+   <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5"><p class="text-xs uppercase font-bold text-slate-500">Booked</p><p id="booked" class="text-3xl font-extrabold text-indigo-400 mt-2">0</p></div>
+   <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5"><p class="text-xs uppercase font-bold text-slate-500">Verified</p><p id="verified" class="text-3xl font-extrabold text-emerald-400 mt-2">0</p></div>
+   <div class="rounded-2xl bg-slate-900 border border-slate-800 p-5"><p class="text-xs uppercase font-bold text-slate-500">Pending</p><p id="pending" class="text-3xl font-extrabold text-amber-400 mt-2">0</p></div>
+  </div>
+  <div class="grid lg:grid-cols-3 gap-6">
+   <section class="lg:col-span-2 rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden">
+    <div class="p-5 border-b border-slate-800 flex items-center justify-between"><div><h2 class="font-extrabold">Farmer Procurement Queue</h2><p class="text-xs text-slate-500 mt-1">Bookings stored in the MandiMitra Firestore collection.</p></div><button id="refresh" class="px-3 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold"><i class="fa-solid fa-rotate mr-1"></i>Refresh</button></div>
+    <div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-slate-950 text-slate-500 text-xs uppercase"><tr><th class="text-left p-4">Token</th><th class="text-left p-4">Crop</th><th class="text-left p-4">Qty</th><th class="text-left p-4">Date</th><th class="text-left p-4">Status</th></tr></thead><tbody id="rows" class="divide-y divide-slate-800"></tbody></table></div>
+   </section>
+   <aside class="rounded-2xl bg-slate-900 border border-slate-800 p-6"><h2 class="font-extrabold mb-5">Officer Profile</h2><div class="space-y-4 text-sm"><div><span class="text-slate-500 block text-xs uppercase font-bold">Officer ID</span><span id="officerId" class="font-mono">—</span></div><div><span class="text-slate-500 block text-xs uppercase font-bold">Email</span><span id="email" class="break-all">—</span></div><div><span class="text-slate-500 block text-xs uppercase font-bold">Assigned Mandi</span><span id="assigned">—</span></div><div><span class="text-slate-500 block text-xs uppercase font-bold">UID</span><span id="uid" class="font-mono text-xs break-all text-slate-400">—</span></div></div></aside>
+  </div>
+ </div>
+</main>
+<div id="toast" class="fixed right-4 top-20 z-50"></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import {getFirestore,doc,getDoc,collection,getDocs,query,orderBy,updateDoc} from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDIs4AfFaQiEk_YG6nxKBFW6ioNWusF2DE",
+  authDomain: "mandimitra-8feda.firebaseapp.com",
+  projectId: "mandimitra-8feda",
+  storageBucket: "mandimitra-8feda.firebasestorage.app",
+  messagingSenderId: "221569995360",
+  appId: "1:221569995360:web:42f65218fec434ac192905",
+  measurementId: "G-9MHKBKEEQR"
+};
+
+const AUTH_ROUTE="{{ url_for('auth') }}"; const goAuth=()=>window.location.href=(AUTH_ROUTE.includes("{{")?"auth.html":AUTH_ROUTE);\nconst app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app),$=id=>document.getElementById(id);
+$("logoutBtn").onclick=async()=>{await signOut(auth);goAuth()};
+const toast=m=>{ $("toast").innerHTML=`<div class="bg-indigo-600 px-4 py-3 rounded-xl shadow-xl text-sm font-semibold">${m}</div>`;setTimeout(()=>$("toast").innerHTML="",3000)};
+async function loadBookings(){
+ const body=$("rows"); body.innerHTML='<tr><td colspan="5" class="p-6 text-center text-slate-500">Loading...</td></tr>';
+ try{
+  const snap=await getDocs(query(collection(db,"bookings"),orderBy("createdAt","desc")));
+  const docs=[...snap.docs];
+  $("total").textContent=docs.length;
+  $("booked").textContent=docs.filter(x=>(x.data().status||"Booked")==="Booked").length;
+  $("verified").textContent=docs.filter(x=>x.data().status==="Verified").length;
+  $("pending").textContent=docs.filter(x=>["Booked","Pending"].includes(x.data().status||"Booked")).length;
+  if(!docs.length){body.innerHTML='<tr><td colspan="5" class="p-6 text-center text-slate-500">No farmer bookings yet.</td></tr>';return;}
+  body.innerHTML=docs.slice(0,30).map(d=>{const b=d.data();return `<tr class="hover:bg-slate-800/50"><td class="p-4 font-bold text-indigo-300">${b.token||d.id.slice(0,8)}</td><td class="p-4">${b.crop||"—"}</td><td class="p-4">${b.quantity||0} qtl</td><td class="p-4 text-slate-400">${b.date||"—"}</td><td class="p-4"><button class="status-btn px-2.5 py-1 rounded-full text-xs font-bold ${b.status==="Verified"?"bg-emerald-500/15 text-emerald-300":"bg-amber-500/15 text-amber-300"}" data-id="${d.id}" data-status="${b.status||"Booked"}">${b.status||"Booked"}</button></td></tr>`}).join('');
+  document.querySelectorAll(".status-btn").forEach(btn=>btn.onclick=async()=>{const next=btn.dataset.status==="Verified"?"Booked":"Verified";try{await updateDoc(doc(db,"bookings",btn.dataset.id),{status:next});toast("Booking status updated.");loadBookings()}catch(e){toast("Could not update status.")}});
+ }catch(e){console.error(e);body.innerHTML='<tr><td colspan="5" class="p-6 text-center text-amber-400">Unable to read bookings. Check Firestore rules/indexes.</td></tr>';}
+}
+onAuthStateChanged(auth,async user=>{
+ if(!user){goAuth();return;}
+ const snap=await getDoc(doc(db,"users",user.uid));
+ if(!snap.exists()||snap.data().role!=="officer"){await signOut(auth);goAuth();return;}
+ const d=snap.data(); $("name").textContent=d.fullName||"Officer"; $("avatar").textContent=(d.fullName||"O")[0].toUpperCase(); $("centre").textContent=d.centreName||"Procurement Centre"; $("district").textContent=d.district||"District"; $("officerId").textContent=d.officerId||"—"; $("email").textContent=d.email||user.email; $("assigned").textContent=(d.centreName||"—")+" · "+(d.district||""); $("uid").textContent=user.uid; $("loading").classList.add("hidden");$("dashboard").classList.remove("hidden");loadBookings();
+});
+$("refresh").onclick=loadBookings;
+</script>
+</body></html>

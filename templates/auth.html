@@ -432,6 +432,28 @@
         window.activeMode = 'login';
         window.currentUserProfile = null;
 
+        // Flask routes with a static-file fallback for local testing.
+        // When served by Flask, url_for() resolves these to your real endpoints.
+        window.MANDI_ROUTES = {
+            farmer: "{{ url_for('farmer_dashboard') }}",
+            officer: "{{ url_for('centre_dashboard') }}"
+        };
+
+        function redirectToDashboard(role) {
+            const configured = window.MANDI_ROUTES[role];
+            // If the file is opened directly instead of through Flask/Jinja,
+            // use the static HTML dashboard names.
+            const fallback = role === 'farmer'
+                ? 'farmer_dashboard.html'
+                : 'centre_dashboard.html';
+
+            if (!configured || configured.includes('{{')) {
+                window.location.href = fallback;
+            } else {
+                window.location.href = configured;
+            }
+        }
+
         // Function: Switch Tab (Farmer/Officer Login/Register)
         window.switchAuthTab = function(role, mode) {
             window.activeRole = role;
@@ -521,7 +543,7 @@
             try {
                 // UI Loading state
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Saving to Firestore...</span>`;
+                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Creating account...</span>`;
 
                 let email = '';
                 let password = '';
@@ -584,15 +606,7 @@ showToast(
     'success'
 );
 
-setTimeout(() => {
-
-    if (role === "farmer") {
-        window.location.href = "{{ url_for('farmer_dashboard') }}";
-    } else {
-        window.location.href = "{{ url_for('centre_dashboard') }}";
-    }
-
-}, 800);
+redirectToDashboard(role);
             } catch (error) {
                 console.error("Signup Error:", error);
                 let msg = error.message;
@@ -602,6 +616,10 @@ setTimeout(() => {
                     msg = 'Password should be at least 6 characters long.';
                 } else if (error.code === 'auth/invalid-email') {
                     msg = 'Please provide a valid email address.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    msg = 'Network request failed. Check your internet connection and try again.';
+                } else if (error.code === 'permission-denied' || error.code === 'firestore/permission-denied') {
+                    msg = 'The profile operation was denied. Check your Firestore security rules.';
                 }
                 showToast(`Signup Failed: ${msg}`, 'error');
             } finally {
@@ -662,13 +680,9 @@ setTimeout(() => {
         const userData = userDoc.data();
 
         // Redirect according to role
-        if (userData.role === "farmer") {
-            window.location.href = "{{ url_for('farmer_dashboard') }}";
-        } 
-        else if (userData.role === "officer") {
-            window.location.href = "{{ url_for('centre_dashboard') }}";
-        } 
-        else {
+        if (userData.role === "farmer" || userData.role === "officer") {
+            redirectToDashboard(userData.role);
+        } else {
             showToast("Unknown account role.", "error");
         }
 
@@ -684,6 +698,10 @@ setTimeout(() => {
             error.code === 'auth/wrong-password'
         ) {
             msg = 'Invalid email or password.';
+        } else if (error.code === 'auth/network-request-failed') {
+            msg = 'Network request failed. Check your internet connection and try again.';
+        } else if (error.code === 'permission-denied' || error.code === 'firestore/permission-denied') {
+            msg = 'Signed in, but your profile could not be loaded. Check your Firestore security rules.';
         }
 
         showToast(`Login Failed: ${msg}`, 'error');
@@ -943,7 +961,33 @@ setTimeout(() => {
             }, 4500);
         };
 
-        // Attach header logout button handler
+        // Keep the authentication page and dashboard in sync with Firebase.
+        // If an authenticated user opens auth.html again, send them to the
+        // correct dashboard instead of showing the login screen.
+        onAuthStateChanged(auth, async (authUser) => {
+            if (!authUser) return;
+
+            // The submit handlers already perform the profile read/write.
+            // Skip this lookup during submission to avoid duplicate Firestore work.
+            const formIsSubmitting =
+                document.querySelector('button[type="submit"]:disabled') !== null;
+            if (formIsSubmitting) return;
+
+            try {
+                const snap = await getDoc(doc(db, "users", authUser.uid));
+                if (!snap.exists()) return;
+
+                const role = snap.data().role;
+                if (role === "farmer" || role === "officer") {
+                    redirectToDashboard(role);
+                }
+            } catch (error) {
+                console.error("Auth state/profile lookup error:", error);
+                showToast("Could not load your profile. Check your internet connection and try again.", "error");
+            }
+        });
+
+        // Optional header logout button handler.
         const headerLogoutBtn = document.getElementById('headerLogoutBtn');
         if (headerLogoutBtn) {
             headerLogoutBtn.addEventListener('click', signOutUser);

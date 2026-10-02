@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MandiMitra | Farmer Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+body{font-family:Inter,system-ui,sans-serif;background:#f8fafc}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:18px;box-shadow:0 8px 30px rgba(15,23,42,.06)}
+</style>
+</head>
+<body class="text-slate-800">
+<nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+  <a href="#" class="font-extrabold text-xl">Mandi<span class="text-emerald-600">Mitra</span></a>
+  <div class="flex items-center gap-3">
+   <span id="roleBadge" class="hidden sm:inline-flex px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold">FARMER</span>
+   <div id="avatar" class="w-9 h-9 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold">F</div>
+   <button id="logoutBtn" class="px-3 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100"><i class="fa-solid fa-right-from-bracket mr-1"></i>Logout</button>
+  </div>
+ </div>
+</nav>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+ <div class="mb-7">
+  <p class="text-sm text-emerald-600 font-bold">KISAN PORTAL</p>
+  <h1 class="text-3xl sm:text-4xl font-extrabold mt-1">Welcome, <span id="name">Farmer</span> 👋</h1>
+  <p class="text-slate-500 mt-2">Manage your mandi slots, procurement tokens and payment status from one place.</p>
+ </div>
+
+ <div id="loading" class="card p-8 text-center text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-2"></i>Loading your profile...</div>
+ <div id="dashboard" class="hidden">
+  <div class="grid md:grid-cols-3 gap-5 mb-6">
+   <div class="card p-5"><p class="text-xs uppercase font-bold text-slate-400">Current Token</p><p id="token" class="text-2xl font-extrabold text-emerald-600 mt-2">Not booked</p><p id="tokenStatus" class="text-xs text-slate-500 mt-1">Book a slot to receive a token</p></div>
+   <div class="card p-5"><p class="text-xs uppercase font-bold text-slate-400">Primary Crop</p><p id="crop" class="text-2xl font-extrabold mt-2">—</p><p class="text-xs text-slate-500 mt-1">Registered crop</p></div>
+   <div class="card p-5"><p class="text-xs uppercase font-bold text-slate-400">Location</p><p id="location" class="text-lg font-extrabold mt-2">—</p><p class="text-xs text-slate-500 mt-1">Village • District • State</p></div>
+  </div>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+   <section class="card p-6 lg:col-span-2">
+    <div class="flex items-center justify-between mb-5"><div><h2 class="text-lg font-extrabold">Book Procurement Slot</h2><p class="text-sm text-slate-500">Create a mandi booking linked to your Firebase account.</p></div><i class="fa-solid fa-calendar-check text-emerald-600 text-xl"></i></div>
+    <form id="bookingForm" class="grid sm:grid-cols-2 gap-4">
+     <div><label class="block text-xs font-bold uppercase text-slate-500 mb-1">Crop</label><select id="bookingCrop" required class="w-full rounded-xl border border-slate-300 px-3 py-3 outline-none focus:ring-2 focus:ring-emerald-500"><option>Wheat (Gehu)</option><option>Rice / Paddy (Dhan)</option><option>Mustard (Sarson)</option><option>Maize (Makka)</option><option>Pulses (Dal / Gram)</option><option>Sugarcane (Ganna)</option><option>Cotton (Kapas)</option><option>Vegetables / Horticulture</option></select></div>
+     <div><label class="block text-xs font-bold uppercase text-slate-500 mb-1">Quantity (quintal)</label><input id="quantity" type="number" min="1" step="0.1" required placeholder="e.g. 20" class="w-full rounded-xl border border-slate-300 px-3 py-3 outline-none focus:ring-2 focus:ring-emerald-500"></div>
+     <div><label class="block text-xs font-bold uppercase text-slate-500 mb-1">Procurement Centre</label><select id="centre" required class="w-full rounded-xl border border-slate-300 px-3 py-3"><option>Nearest Mandi Centre</option><option>Central Anaj Mandi</option><option>District Procurement Centre</option></select></div>
+     <div><label class="block text-xs font-bold uppercase text-slate-500 mb-1">Preferred Date</label><input id="bookingDate" type="date" required class="w-full rounded-xl border border-slate-300 px-3 py-3"></div>
+     <div class="sm:col-span-2"><button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl py-3"><i class="fa-solid fa-ticket mr-2"></i>Generate Mandi Token</button></div>
+    </form>
+   </section>
+
+   <aside class="card p-6">
+    <h2 class="font-extrabold mb-4">My Profile</h2>
+    <div class="space-y-3 text-sm">
+     <div><span class="text-slate-400 block text-xs uppercase font-bold">Email</span><span id="email" class="font-semibold break-all">—</span></div>
+     <div><span class="text-slate-400 block text-xs uppercase font-bold">Mobile</span><span id="phone" class="font-semibold">—</span></div>
+     <div><span class="text-slate-400 block text-xs uppercase font-bold">Account ID</span><span id="uid" class="font-mono text-xs break-all">—</span></div>
+    </div>
+   </aside>
+  </div>
+
+  <section class="card p-6 mt-6">
+   <h2 class="font-extrabold mb-4">Recent Bookings</h2>
+   <div id="bookings" class="text-sm text-slate-500">No bookings yet.</div>
+  </section>
+ </div>
+</main>
+<div id="toast" class="fixed right-4 top-20 z-50"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, addDoc, collection, query, where, getDocs, orderBy } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDIs4AfFaQiEk_YG6nxKBFW6ioNWusF2DE",
+  authDomain: "mandimitra-8feda.firebaseapp.com",
+  projectId: "mandimitra-8feda",
+  storageBucket: "mandimitra-8feda.firebasestorage.app",
+  messagingSenderId: "221569995360",
+  appId: "1:221569995360:web:42f65218fec434ac192905",
+  measurementId: "G-9MHKBKEEQR"
+};
+
+const AUTH_ROUTE="{{ url_for('auth') }}"; const goAuth=()=>window.location.href=(AUTH_ROUTE.includes("{{")?"auth.html":AUTH_ROUTE);\nconst app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+const $=id=>document.getElementById(id);
+const toast=(m,ok=true)=>{ $("toast").innerHTML=`<div class="px-4 py-3 rounded-xl shadow-xl ${ok?'bg-emerald-700':'bg-rose-700'} text-white text-sm font-semibold">${m}</div>`; setTimeout(()=>$("toast").innerHTML='',3500)};
+$("logoutBtn").onclick=async()=>{await signOut(auth); goAuth()};
+$("bookingDate").min=new Date().toISOString().split('T')[0];
+
+async function loadBookings(uid){
+ try{
+  const snap=await getDocs(query(collection(db,"bookings"),where("farmerUid","==",uid),orderBy("createdAt","desc")));
+  if(snap.empty){ $("bookings").textContent="No bookings yet."; return; }
+  $("bookings").innerHTML=[...snap.docs].slice(0,10).map(d=>{const b=d.data();return `<div class="border-b last:border-0 py-3 flex flex-wrap gap-3 justify-between"><span><b>${b.token||"—"}</b> · ${b.crop||"—"} · ${b.quantity||0} qtl</span><span class="text-slate-500">${b.date||"—"} · ${b.status||"Booked"}</span></div>`}).join('');
+ }catch(e){ console.error(e); $("bookings").innerHTML='<span class="text-amber-600">Bookings are ready, but Firestore rules/indexes may need configuration.</span>'; }
+}
+onAuthStateChanged(auth,async user=>{
+ if(!user){goAuth();return;}
+ const snap=await getDoc(doc(db,"users",user.uid));
+ if(!snap.exists() || snap.data().role!=="farmer"){await signOut(auth);goAuth();return;}
+ const d=snap.data();
+ $("name").textContent=d.fullName||user.email.split("@")[0]; $("avatar").textContent=(d.fullName||"F")[0].toUpperCase();
+ $("crop").textContent=d.crop||"General Agriculture"; $("location").textContent=[d.village,d.district,d.state].filter(Boolean).join(" • ")||"Not provided";
+ $("email").textContent=d.email||user.email; $("phone").textContent=d.phone||"Not provided"; $("uid").textContent=user.uid;
+ $("loading").classList.add("hidden"); $("dashboard").classList.remove("hidden"); await loadBookings(user.uid);
+});
+$("bookingForm").onsubmit=async e=>{
+ e.preventDefault(); const user=auth.currentUser; if(!user)return;
+ const btn=e.target.querySelector("button"); btn.disabled=true; btn.innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i>Creating token...';
+ try{
+  const token="MM-"+new Date().getFullYear()+"-"+Math.floor(1000+Math.random()*9000);
+  await addDoc(collection(db,"bookings"),{farmerUid:user.uid,farmerEmail:user.email,crop:$("bookingCrop").value,quantity:Number($("quantity").value),centre:$("centre").value,date:$("bookingDate").value,status:"Booked",token,createdAt:Date.now()});
+  $("token").textContent=token; $("tokenStatus").textContent="Booked • Awaiting procurement"; toast("Mandi slot booked successfully."); await loadBookings(user.uid); e.target.reset();
+ }catch(err){console.error(err);toast(err.message||"Could not create booking.",false)}finally{btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-ticket mr-2"></i>Generate Mandi Token'}
+};
+</script>
+</body></html>
