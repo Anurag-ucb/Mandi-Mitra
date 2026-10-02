@@ -7,8 +7,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "kisan-seva-secret-key")
-DATABASE_URL = os.getenv("DATABASE_URL")
+app.secret_key = os.getenv("29e1b7a26cee8b0ccc1facb534c067d5489b6420792391b2981956b84dc7ffb1", "kisan-seva-secret-key")
+DATABASE_URL = os.getenv("postgresql://postgres:anurag%40ucb@db.xxxxxx.supabase.co:5432/postgres")
 
 def get_db():
     conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
