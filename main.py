@@ -1,14 +1,17 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+import os
 import sqlite3
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
 app.secret_key = "kisan-seva-secret-key"
 
-DATABASE = "database.db"
-
+# Ensure absolute path to database.db relative to main.py
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, "database.db")
 
 def get_db():
-    conn = sqlite3.connect(DATABASE)
+    # Use uri=True and mode=ro for read-only access on Vercel
+    conn = sqlite3.connect(f"file:{DATABASE}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
     return conn
 
