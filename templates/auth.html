@@ -63,7 +63,7 @@
     <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
-                <a href="#" class="flex items-center gap-3 group">
+                <a href="/" class="flex items-center gap-3 group">
                     <div>
                         <span class="font-extrabold text-xl tracking-tight text-stone-900">
                             Mandi<span class="text-emerald-700">Mitra</span>
@@ -72,9 +72,9 @@
                 </a>
 
                 <div class="flex items-center gap-3 sm:gap-4">
-                    <div id="firebaseStatusBadge" class="flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                        <span id="firebaseStatusText">Connecting...</span>
+                    <div class="flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span>System Ready</span>
                     </div>
                 </div>
             </div>
@@ -93,7 +93,7 @@
                     Welcome to <span class="text-emerald-700">MandiMitra</span>
                 </h1>
                 <p class="text-sm sm:text-base text-slate-600 mt-1 max-w-md mx-auto">
-                    Unified Portal for Farmers & Government Procurement Officers. Register and access secure mandi services.
+                    Unified Portal for Farmers & Government Procurement Officers. Login to access secure mandi services.
                 </p>
             </div>
 
@@ -101,25 +101,15 @@
             <div class="glass-card rounded-2xl shadow-xl overflow-hidden border border-slate-200">
                 
                 <!-- Role & Auth Mode Navigation Tabs -->
-                <div class="bg-slate-100 p-2 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                    <button id="tabFarmerLogin" onclick="switchAuthTab('farmer', 'login')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200">
+                <div class="bg-slate-100 p-2 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-2 gap-1.5">
+                    <button id="tabFarmerLogin" onclick="switchAuthTab('farmer')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200">
                         <i class="fa-solid fa-tractor text-emerald-600"></i>
                         <span>Farmer Login</span>
                     </button>
 
-                    <button id="tabFarmerRegister" onclick="switchAuthTab('farmer', 'register')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
-                        <i class="fa-solid fa-user-plus text-emerald-600"></i>
-                        <span>Farmer Signup</span>
-                    </button>
-
-                    <button id="tabOfficerLogin" onclick="switchAuthTab('officer', 'login')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
+                    <button id="tabOfficerLogin" onclick="switchAuthTab('officer')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
                         <i class="fa-solid fa-id-card text-indigo-600"></i>
                         <span>Officer Login</span>
-                    </button>
-
-                    <button id="tabOfficerRegister" onclick="switchAuthTab('officer', 'register')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5">
-                        <i class="fa-solid fa-building-columns text-indigo-600"></i>
-                        <span>Officer Register</span>
                     </button>
                 </div>
 
@@ -131,17 +121,17 @@
                         <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-emerald-800 mb-2">
                             <i class="fa-solid fa-circle-info text-emerald-600 text-base mt-0.5"></i>
                             <div>
-                                <span class="font-bold">Kisan Login:</span> Enter your registered email address and password to view your mandi slot details and MSP token registry.
+                                <span class="font-bold">Farmer Login:</span> Enter your registered phone number and password to access your dashboard.
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Farmer Email ID *</label>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Phone Number (10 digits) *</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                                    <i class="fa-solid fa-envelope"></i>
+                                    <i class="fa-solid fa-phone"></i>
                                 </div>
-                                <input type="email" id="farmerLoginEmail" required placeholder="kisan@mandimitra.in" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                <input type="tel" id="farmerLoginPhone" name="phone" pattern="[0-9]{10}" required placeholder="9876543210" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
                             </div>
                         </div>
 
@@ -151,21 +141,11 @@
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                     <i class="fa-solid fa-lock"></i>
                                 </div>
-                                <input type="password" id="farmerLoginPass" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                                <input type="password" id="farmerLoginPass" name="password" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
                                 <button type="button" onclick="togglePasswordVisibility('farmerLoginPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
                             </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-xs pt-1">
-                            <label class="flex items-center text-slate-600 cursor-pointer">
-                                <input type="checkbox" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 mr-2">
-                                Remember Credentials
-                            </label>
-                            <button type="button" onclick="fillTestCredentials('farmer')" class="text-emerald-700 font-semibold hover:underline">
-                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Fill Test Kisan
-                            </button>
                         </div>
 
                         <button type="submit" id="farmerLoginSubmitBtn" class="w-full py-3 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/25 transition-all flex items-center justify-center space-x-2">
@@ -174,107 +154,22 @@
                         </button>
                     </form>
 
-
-                    <!-- FORM 2: FARMER SIGNUP -->
-                    <form id="farmerRegisterForm" onsubmit="handleSignup(event, 'farmer')" class="hidden space-y-4">
-                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-emerald-800 mb-2">
-                            <i class="fa-solid fa-user-check text-emerald-600 text-base mt-0.5"></i>
-                            <div>
-                                <span class="font-bold">New Farmer Registration:</span> Store your details directly in MandiMitra Cloud Database for official MSP procurement slotting.
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Full Name *</label>
-                                <input type="text" id="farmerFullName" required placeholder="e.g. Ramesh Kumar Patel" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Mobile Number *</label>
-                                <input type="tel" id="farmerPhone" pattern="[0-9]{10}" required placeholder="10-digit mobile number" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Email Address *</label>
-                                <input type="email" id="farmerRegEmail" required placeholder="ramesh@kisan.in" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Password *</label>
-                                <div class="relative">
-                                    <input type="password" id="farmerRegPass" required minlength="6" placeholder="Min. 6 characters" class="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                                    <button type="button" onclick="togglePasswordVisibility('farmerRegPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Village / Panchayat *</label>
-                                <input type="text" id="farmerVillage" required placeholder="e.g. Rampur" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">District *</label>
-                                <input type="text" id="farmerDistrict" required placeholder="e.g. Karnal" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">State *</label>
-                                <select id="farmerState" required class="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                                    <option value="">Select State</option>
-                                    <option value="Uttar Pradesh">Uttar Pradesh</option>
-                                    <option value="Punjab">Punjab</option>
-                                    <option value="Haryana">Haryana</option>
-                                    <option value="Madhya Pradesh">Madhya Pradesh</option>
-                                    <option value="Rajasthan">Rajasthan</option>
-                                    <option value="Bihar">Bihar</option>
-                                    <option value="Gujarat">Gujarat</option>
-                                    <option value="Maharashtra">Maharashtra</option>
-                                    <option value="Other">Other State</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Primary Produce / Crop Type *</label>
-                            <select id="farmerCrop" required class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
-                                <option value="">Select Main Crop Type</option>
-                                <option value="Wheat (Gehu)">Wheat (Gehu)</option>
-                                <option value="Rice / Paddy (Dhan)">Rice / Paddy (Dhan)</option>
-                                <option value="Mustard (Sarson)">Mustard (Sarson)</option>
-                                <option value="Maize (Makka)">Maize (Makka)</option>
-                                <option value="Pulses (Dal / Gram)">Pulses (Dal / Gram)</option>
-                                <option value="Sugarcane (Ganna)">Sugarcane (Ganna)</option>
-                                <option value="Cotton (Kapas)">Cotton (Kapas)</option>
-                                <option value="Vegetables / Horticulture">Vegetables / Horticulture</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" id="farmerRegSubmitBtn" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i>
-                            <span>Create Farmer Account & Sync Data</span>
-                        </button>
-                    </form>
-
-
-                    <!-- FORM 3: OFFICER LOGIN -->
+                    <!-- FORM 2: OFFICER LOGIN -->
                     <form id="officerLoginForm" onsubmit="handleLogin(event, 'officer')" class="hidden space-y-4">
                         <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-indigo-900 mb-2">
                             <i class="fa-solid fa-user-shield text-indigo-600 text-base mt-0.5"></i>
                             <div>
-                                <span class="font-bold">Mandi Official Authorization:</span> Access government procurement ledger, verify farmer gate passes, and issue payment certificates.
+                                <span class="font-bold">Mandi Officer Login:</span> Access government procurement ledger and verify farmers.
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Official Email Address *</label>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Officer Username *</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                     <i class="fa-solid fa-briefcase"></i>
                                 </div>
-                                <input type="email" id="officerLoginEmail" required placeholder="officer@mandi.gov.in" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <input type="text" id="officerLoginUsername" name="username" required placeholder="officer_username" class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                             </div>
                         </div>
 
@@ -284,94 +179,30 @@
                                 <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                     <i class="fa-solid fa-key"></i>
                                 </div>
-                                <input type="password" id="officerLoginPass" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <input type="password" id="officerLoginPass" name="password" required placeholder="••••••••" class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
                                 <button type="button" onclick="togglePasswordVisibility('officerLoginPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
                                     <i class="fa-solid fa-eye"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between text-xs pt-1">
-                            <label class="flex items-center text-slate-600 cursor-pointer">
-                                <input type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 mr-2">
-                                Save Official Session
-                            </label>
-                            <button type="button" onclick="fillTestCredentials('officer')" class="text-indigo-700 font-semibold hover:underline">
-                                <i class="fa-solid fa-wand-magic-sparkles mr-1"></i>Fill Test Officer
-                            </button>
-                        </div>
-
                         <button type="submit" id="officerLoginSubmitBtn" class="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-slate-800 hover:from-indigo-700 hover:to-slate-900 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center space-x-2">
-                            <span>Authenticate Mandi Officer</span>
+                            <span>Authenticate Officer</span>
                             <i class="fa-solid fa-shield-check text-xs"></i>
-                        </button>
-                    </form>
-
-
-                    <!-- FORM 4: OFFICER SIGNUP -->
-                    <form id="officerRegisterForm" onsubmit="handleSignup(event, 'officer')" class="hidden space-y-4">
-                        <div class="bg-indigo-50/70 border border-indigo-200 rounded-xl p-3 flex items-start space-x-3 text-xs text-indigo-900 mb-2">
-                            <i class="fa-solid fa-building-circle-check text-indigo-600 text-base mt-0.5"></i>
-                            <div>
-                                <span class="font-bold">Procurement Officer Enrollment:</span> Create authorized officer credentials registered to your assigned Mandi Procurement Center.
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Officer Full Name *</label>
-                                <input type="text" id="officerFullName" required placeholder="e.g. Dr. Anil Verma" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Govt. / Officer ID Badge No. *</label>
-                                <input type="text" id="officerIdBadge" required placeholder="e.g. MANDI-OFF-7821" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Assigned Procurement Mandi *</label>
-                                <input type="text" id="officerCentreName" required placeholder="e.g. Central Anaj Mandi Sector 4" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">District / Station *</label>
-                                <input type="text" id="officerDistrict" required placeholder="e.g. Ludhiana" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Official Email Address *</label>
-                                <input type="email" id="officerRegEmail" required placeholder="anil.verma@mandi.gov.in" class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Secure Password *</label>
-                                <div class="relative">
-                                    <input type="password" id="officerRegPass" required minlength="6" placeholder="Min 6 characters" class="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
-                                    <button type="button" onclick="togglePasswordVisibility('officerRegPass', this)" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit" id="officerRegSubmitBtn" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 transition-all flex items-center justify-center space-x-2">
-                            <i class="fa-solid fa-database"></i>
-                            <span>Register Official & Save Record</span>
                         </button>
                     </form>
 
                 </div>
 
-                <!-- Card Footer Project Config Info -->
+                <!-- Card Footer -->
                 <div class="bg-slate-100 px-6 py-3 border-t border-slate-200 flex flex-wrap items-center justify-between text-xs text-slate-500">
                     <span class="flex items-center space-x-1">
                         <i class="fa-solid fa-server text-emerald-600"></i>
-                        <span>Firebase Project ID: <strong class="font-mono text-slate-700">mandimitra-8feda</strong></span>
+                        <span>MandiMitra Platform v1.0</span>
                     </span>
                     <span class="flex items-center space-x-1">
                         <i class="fa-solid fa-lock text-slate-400"></i>
-                        <span>SSL Encrypted Session</span>
+                        <span>Secure Session</span>
                     </span>
                 </div>
             </div>
@@ -382,156 +213,19 @@
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="fixed top-20 right-4 z-50 flex flex-col space-y-2 max-w-sm w-full pointer-events-none"></div>
 
-    <!-- FIREBASE MODULAR SDK V11 SETUP SCRIPT -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-auth.js";
-        import { 
-            getFirestore, 
-            doc, 
-            setDoc, 
-            getDoc, 
-            serverTimestamp 
-        } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-firestore.js";
-
-        // User provided Firebase configuration for MandiMitra
-        const firebaseConfig = {
-            apiKey: "AIzaSyDIs4AfFaQiEk_YG6nxKBFW6ioNWusF2DE",
-            authDomain: "mandimitra-8feda.firebaseapp.com",
-            projectId: "mandimitra-8feda",
-            storageBucket: "mandimitra-8feda.firebasestorage.app",
-            messagingSenderId: "221569995360",
-            appId: "1:221569995360:web:42f65218fec434ac192905",
-            measurementId: "G-9MHKBKEEQR"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Update header UI status
-        const statusBadge = document.getElementById('firebaseStatusBadge');
-        const statusText = document.getElementById('firebaseStatusText');
-        if (statusBadge && statusText) {
-            statusBadge.className = "flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20";
-            statusText.textContent = "Firebase Ready";
-        }
-
-        // Global variables exposed for inline handlers
-        window.activeRole = 'farmer';
-        window.activeMode = 'login';
-        window.currentUserProfile = null;
-
-        // Flask routes with a static-file fallback for local testing
-        window.MANDI_ROUTES = {
-            farmer: "{{ url_for('farmer_dashboard') }}",
-            officer: "{{ url_for('centre_dashboard') }}"
-        };
-
-        function redirectToDashboard(role) {
-            const configured = window.MANDI_ROUTES[role];
-            const fallback = role === 'farmer' ? 'farmer_dashboard.html' : 'centre_dashboard.html';
-
-            if (!configured || configured.includes('{{')) {
-                window.location.href = fallback;
-            } else {
-                window.location.href = configured;
-            }
-        }
-
-        // Switch Tab Handler
-        window.switchAuthTab = function(role, mode) {
-            window.activeRole = role;
-            window.activeMode = mode;
-
-            const tabs = ['tabFarmerLogin', 'tabFarmerRegister', 'tabOfficerLogin', 'tabOfficerRegister'];
-            const forms = ['farmerLoginForm', 'farmerRegisterForm', 'officerLoginForm', 'officerRegisterForm'];
-
-            tabs.forEach(tabId => {
-                const el = document.getElementById(tabId);
-                if (el) {
-                    el.className = "tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5";
-                }
-            });
-
-            forms.forEach(formId => {
-                const el = document.getElementById(formId);
-                if (el) el.classList.add('hidden');
-            });
-
-            let activeTabId = '';
-            let activeFormId = '';
-
-            if (role === 'farmer' && mode === 'login') {
-                activeTabId = 'tabFarmerLogin';
-                activeFormId = 'farmerLoginForm';
-            } else if (role === 'farmer' && mode === 'register') {
-                activeTabId = 'tabFarmerRegister';
-                activeFormId = 'farmerRegisterForm';
-            } else if (role === 'officer' && mode === 'login') {
-                activeTabId = 'tabOfficerLogin';
-                activeFormId = 'officerLoginForm';
-            } else if (role === 'officer' && mode === 'register') {
-                activeTabId = 'tabOfficerRegister';
-                activeFormId = 'officerRegisterForm';
-            }
-
-            const activeTab = document.getElementById(activeTabId);
-            const activeForm = document.getElementById(activeFormId);
-
-            if (activeTab) {
-                const activeColor = role === 'farmer' ? 'text-emerald-700' : 'text-indigo-700';
-                activeTab.className = `tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white ${activeColor} shadow-sm border border-slate-200`;
-            }
-            if (activeForm) {
-                activeForm.classList.remove('hidden');
-            }
-        };
-
-        // Password Visibility Toggle
-        window.togglePasswordVisibility = function(inputId, btn) {
-            const input = document.getElementById(inputId);
-            const icon = btn.querySelector('i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fa-solid fa-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'fa-solid fa-eye';
-            }
-        };
-
-        // Auto-fill Test Credentials
-        window.fillTestCredentials = function(role) {
-            if (role === 'farmer') {
-                document.getElementById('farmerLoginEmail').value = 'kisan@mandimitra.in';
-                document.getElementById('farmerLoginPass').value = 'farmer123';
-                window.showToast('Farmer test credentials auto-filled', 'info');
-            } else {
-                document.getElementById('officerLoginEmail').value = 'officer@mandi.gov.in';
-                document.getElementById('officerLoginPass').value = 'officer123';
-                window.showToast('Officer test credentials auto-filled', 'info');
-            }
-        };
-
+    <!-- AUTHENTICATION SCRIPT - Flask Backend -->
+    <script>
         // Toast Notification Helper
-        window.showToast = function(message, type = 'info') {
+        function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
 
             const toast = document.createElement('div');
-            toast.className = `pointer-events-auto flex items-center gap-3 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all transform translate-y-2 opacity-0 duration-300 ${
-                type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' :
-                type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
-                'bg-slate-900 border-slate-800 text-white'
-            }`;
+            const bgColor = type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' :
+                            type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
+                            'bg-slate-900 border-slate-800 text-white';
+            
+            toast.className = `pointer-events-auto flex items-center gap-3 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all transform translate-y-2 opacity-0 duration-300 ${bgColor}`;
 
             const iconClass = type === 'error' ? 'fa-circle-xmark text-rose-500' :
                               type === 'success' ? 'fa-circle-check text-emerald-500' :
@@ -548,112 +242,87 @@
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
-        };
+        }
 
-        // Handle User Login
-        window.handleLogin = async function(e, role) {
+        // Switch Tab Handler
+        function switchAuthTab(role) {
+            const farmerForm = document.getElementById('farmerLoginForm');
+            const officerForm = document.getElementById('officerLoginForm');
+            const farmerTab = document.getElementById('tabFarmerLogin');
+            const officerTab = document.getElementById('tabOfficerLogin');
+
+            if (role === 'farmer') {
+                farmerForm.classList.remove('hidden');
+                officerForm.classList.add('hidden');
+                farmerTab.className = "tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200";
+                officerTab.className = "tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5";
+            } else {
+                farmerForm.classList.add('hidden');
+                officerForm.classList.remove('hidden');
+                farmerTab.className = "tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 transition-all-custom flex items-center justify-center space-x-1.5";
+                officerTab.className = "tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-indigo-700 shadow-sm border border-slate-200";
+            }
+        }
+
+        // Password Visibility Toggle
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye';
+            }
+        }
+
+        // Handle User Login - Flask Backend
+        async function handleLogin(e, role) {
             e.preventDefault();
-            const email = role === 'farmer' 
-                ? document.getElementById('farmerLoginEmail').value 
-                : document.getElementById('officerLoginEmail').value;
-            const password = role === 'farmer' 
-                ? document.getElementById('farmerLoginPass').value 
-                : document.getElementById('officerLoginPass').value;
             const submitBtn = document.getElementById(`${role}LoginSubmitBtn`);
 
             try {
                 if (submitBtn) submitBtn.disabled = true;
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
 
-                // Verify Firestore Role Record
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.role && userData.role !== role) {
-                        window.showToast(`Account registered as ${userData.role.toUpperCase()}. Please use the appropriate login tab.`, 'error');
-                        await signOut(auth);
-                        if (submitBtn) submitBtn.disabled = false;
-                        return;
-                    }
-                }
-
-                window.showToast(`Welcome back! Redirecting to ${role} portal...`, 'success');
-                setTimeout(() => redirectToDashboard(role), 1200);
-            } catch (err) {
-                console.error("Login Error:", err);
-                window.showToast(err.message.replace('Firebase: ', ''), 'error');
-                if (submitBtn) submitBtn.disabled = false;
-            }
-        };
-
-        // Handle User Signup
-        window.handleSignup = async function(e, role) {
-            e.preventDefault();
-            const submitBtn = document.getElementById(`${role}RegSubmitBtn`);
-
-            try {
-                if (submitBtn) submitBtn.disabled = true;
-
-                let email, password, payload;
-
+                let data;
                 if (role === 'farmer') {
-                    email = document.getElementById('farmerRegEmail').value;
-                    password = document.getElementById('farmerRegPass').value;
-                    payload = {
-                        fullName: document.getElementById('farmerFullName').value,
-                        phone: document.getElementById('farmerPhone').value,
-                        village: document.getElementById('farmerVillage').value,
-                        district: document.getElementById('farmerDistrict').value,
-                        state: document.getElementById('farmerState').value,
-                        crop: document.getElementById('farmerCrop').value,
-                        role: 'farmer'
+                    data = {
+                        phone: document.getElementById('farmerLoginPhone').value,
+                        password: document.getElementById('farmerLoginPass').value
                     };
                 } else {
-                    email = document.getElementById('officerRegEmail').value;
-                    password = document.getElementById('officerRegPass').value;
-                    payload = {
-                        fullName: document.getElementById('officerFullName').value,
-                        badgeId: document.getElementById('officerIdBadge').value,
-                        centreName: document.getElementById('officerCentreName').value,
-                        district: document.getElementById('officerDistrict').value,
-                        role: 'officer'
+                    data = {
+                        username: document.getElementById('officerLoginUsername').value,
+                        password: document.getElementById('officerLoginPass').value
                     };
                 }
 
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                // Store User metadata in Firestore
-                await setDoc(doc(db, "users", user.uid), {
-                    uid: user.uid,
-                    email: email,
-                    ...payload,
-                    createdAt: serverTimestamp()
+                // Send login request to Flask backend
+                const response = await fetch(`/${role}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(data)
                 });
 
-                window.showToast('Registration successful! Redirecting to dashboard...', 'success');
-                setTimeout(() => redirectToDashboard(role), 1200);
+                if (response.ok) {
+                    showToast(`Welcome back! Redirecting to ${role} dashboard...`, 'success');
+                    setTimeout(() => {
+                        window.location.href = response.url || (role === 'farmer' ? '/farmer_dashboard' : '/centre_dashboard');
+                    }, 1500);
+                } else {
+                    const text = await response.text();
+                    showToast(text || `Login failed. Please check your credentials.`, 'error');
+                    if (submitBtn) submitBtn.disabled = false;
+                }
             } catch (err) {
-                console.error("Signup Error:", err);
-                window.showToast(err.message.replace('Firebase: ', ''), 'error');
+                console.error("Login Error:", err);
+                showToast('Network error. Please try again.', 'error');
                 if (submitBtn) submitBtn.disabled = false;
             }
-        };
-
-        // Auth State Observer
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                try {
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    if (userDoc.exists()) {
-                        window.currentUserProfile = userDoc.data();
-                    }
-                } catch (err) {
-                    console.error("Auth state fetch error:", err);
-                }
-            }
-        });
+        }
     </script>
 </body>
 </html>
