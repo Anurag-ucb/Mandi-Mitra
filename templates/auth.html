@@ -58,37 +58,37 @@
         }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-900 antialiased selection:bg-emerald-100 selection:text-emerald-900">
+<body class="bg-stone-50 text-stone-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 min-h-screen flex flex-col">
 
-   <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16 items-center">
-        <a href="#" class="flex items-center gap-3 group">
-          <div>
-            <span class="font-extrabold text-xl tracking-tight text-stone-900">
-              Mandi<span class="text-emerald-700">Mitra</span>
-            </span>
-          </div>
-        </a>
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <a href="#" class="flex items-center gap-3 group">
+                    <div>
+                        <span class="font-extrabold text-xl tracking-tight text-stone-900">
+                            Mandi<span class="text-emerald-700">Mitra</span>
+                        </span>
+                    </div>
+                </a>
 
-        <div class="flex items-center gap-3 sm:gap-4">
-          <button  class="bg-white hover:bg-emerald-700 text-black px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all shadow-sm hover:shadow hover:-translate-y-0.5">
-            Authentication Portal
-          </button>
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div id="firebaseStatusBadge" class="flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                        <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                        <span id="firebaseStatusText">Connecting...</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </nav>
+    </nav>
 
     <!-- Main Container -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
 
-        <!-- AUTHENTICATION CONTAINER (When logged out) -->
+        <!-- AUTHENTICATION CONTAINER -->
         <div id="authViewContainer" class="w-full max-w-2xl my-auto">
             
             <!-- Hero Title Badge -->
             <div class="text-center mb-6">
-                
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                     Welcome to <span class="text-emerald-700">MandiMitra</span>
                 </h1>
@@ -102,7 +102,7 @@
                 
                 <!-- Role & Auth Mode Navigation Tabs -->
                 <div class="bg-slate-100 p-2 border-b border-slate-200 grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-                    <button id="tabFarmerLogin" onclick="switchAuthTab('farmer', 'login')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-semibold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200">
+                    <button id="tabFarmerLogin" onclick="switchAuthTab('farmer', 'login')" class="tab-btn py-2.5 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all-custom flex items-center justify-center space-x-1.5 bg-white text-emerald-700 shadow-sm border border-slate-200">
                         <i class="fa-solid fa-tractor text-emerald-600"></i>
                         <span>Farmer Login</span>
                     </button>
@@ -377,9 +377,6 @@
             </div>
         </div>
 
-        <!-- USER PROFILE DASHBOARD CONTAINER (When logged in) -->
-        
-
     </main>
 
     <!-- Toast Notification Container -->
@@ -423,7 +420,7 @@
         const statusBadge = document.getElementById('firebaseStatusBadge');
         const statusText = document.getElementById('firebaseStatusText');
         if (statusBadge && statusText) {
-            statusBadge.className = "flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+            statusBadge.className = "flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 border border-emerald-500/20";
             statusText.textContent = "Firebase Ready";
         }
 
@@ -432,8 +429,7 @@
         window.activeMode = 'login';
         window.currentUserProfile = null;
 
-        // Flask routes with a static-file fallback for local testing.
-        // When served by Flask, url_for() resolves these to your real endpoints.
+        // Flask routes with a static-file fallback for local testing
         window.MANDI_ROUTES = {
             farmer: "{{ url_for('farmer_dashboard') }}",
             officer: "{{ url_for('centre_dashboard') }}"
@@ -441,11 +437,7 @@
 
         function redirectToDashboard(role) {
             const configured = window.MANDI_ROUTES[role];
-            // If the file is opened directly instead of through Flask/Jinja,
-            // use the static HTML dashboard names.
-            const fallback = role === 'farmer'
-                ? 'farmer_dashboard.html'
-                : 'centre_dashboard.html';
+            const fallback = role === 'farmer' ? 'farmer_dashboard.html' : 'centre_dashboard.html';
 
             if (!configured || configured.includes('{{')) {
                 window.location.href = fallback;
@@ -454,7 +446,7 @@
             }
         }
 
-        // Function: Switch Tab (Farmer/Officer Login/Register)
+        // Switch Tab Handler
         window.switchAuthTab = function(role, mode) {
             window.activeRole = role;
             window.activeMode = mode;
@@ -462,7 +454,6 @@
             const tabs = ['tabFarmerLogin', 'tabFarmerRegister', 'tabOfficerLogin', 'tabOfficerRegister'];
             const forms = ['farmerLoginForm', 'farmerRegisterForm', 'officerLoginForm', 'officerRegisterForm'];
 
-            // Deactivate all tabs
             tabs.forEach(tabId => {
                 const el = document.getElementById(tabId);
                 if (el) {
@@ -470,13 +461,11 @@
                 }
             });
 
-            // Hide all forms
             forms.forEach(formId => {
                 const el = document.getElementById(formId);
                 if (el) el.classList.add('hidden');
             });
 
-            // Activate specific tab & form
             let activeTabId = '';
             let activeFormId = '';
 
@@ -506,12 +495,10 @@
             }
         };
 
-        // Function: Toggle Password Visibility
+        // Password Visibility Toggle
         window.togglePasswordVisibility = function(inputId, btn) {
             const input = document.getElementById(inputId);
             const icon = btn.querySelector('i');
-            if (!input || !icon) return;
-
             if (input.type === 'password') {
                 input.type = 'text';
                 icon.className = 'fa-solid fa-eye-slash';
@@ -521,477 +508,152 @@
             }
         };
 
-        // Function: Quick Test Credentials Filler
+        // Auto-fill Test Credentials
         window.fillTestCredentials = function(role) {
             if (role === 'farmer') {
-                document.getElementById('farmerLoginEmail').value = 'kisan.ramesh@mandimitra.in';
-                document.getElementById('farmerLoginPass').value = 'Kisan123';
-                showToast('Filled test farmer credentials!', 'info');
+                document.getElementById('farmerLoginEmail').value = 'kisan@mandimitra.in';
+                document.getElementById('farmerLoginPass').value = 'farmer123';
+                window.showToast('Farmer test credentials auto-filled', 'info');
             } else {
-                document.getElementById('officerLoginEmail').value = 'officer.verma@mandi.gov.in';
-                document.getElementById('officerLoginPass').value = 'Officer123';
-                showToast('Filled test officer credentials!', 'info');
+                document.getElementById('officerLoginEmail').value = 'officer@mandi.gov.in';
+                document.getElementById('officerLoginPass').value = 'officer123';
+                window.showToast('Officer test credentials auto-filled', 'info');
             }
         };
 
-        // Function: Handle User Signup (Farmer or Officer)
-        window.handleSignup = async function(event, role) {
-            event.preventDefault();
-            const submitBtn = role === 'farmer' ? document.getElementById('farmerRegSubmitBtn') : document.getElementById('officerRegSubmitBtn');
-            const originalBtnHtml = submitBtn.innerHTML;
-
-            try {
-                // UI Loading state
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Creating account...</span>`;
-
-                let email = '';
-                let password = '';
-                let userProfileData = {};
-
-                if (role === 'farmer') {
-                    email = document.getElementById('farmerRegEmail').value.trim();
-                    password = document.getElementById('farmerRegPass').value;
-                    const fullName = document.getElementById('farmerFullName').value.trim();
-                    const phone = document.getElementById('farmerPhone').value.trim();
-                    const village = document.getElementById('farmerVillage').value.trim();
-                    const district = document.getElementById('farmerDistrict').value.trim();
-                    const state = document.getElementById('farmerState').value;
-                    const crop = document.getElementById('farmerCrop').value;
-
-                    userProfileData = {
-                        fullName: fullName,
-                        phone: phone,
-                        email: email,
-                        role: 'farmer',
-                        village: village,
-                        district: district,
-                        state: state,
-                        crop: crop,
-                        createdAt: new Date().toISOString()
-                    };
-                } else {
-                    email = document.getElementById('officerRegEmail').value.trim();
-                    password = document.getElementById('officerRegPass').value;
-                    const fullName = document.getElementById('officerFullName').value.trim();
-                    const officerId = document.getElementById('officerIdBadge').value.trim();
-                    const centreName = document.getElementById('officerCentreName').value.trim();
-                    const district = document.getElementById('officerDistrict').value.trim();
-
-                    userProfileData = {
-                        fullName: fullName,
-                        officerId: officerId,
-                        centreName: centreName,
-                        district: district,
-                        email: email,
-                        role: 'officer',
-                        createdAt: new Date().toISOString()
-                    };
-                }
-
-                const userCredential =
-    await createUserWithEmailAndPassword(auth, email, password);
-
-const uid = userCredential.user.uid;
-
-userProfileData.uid = uid;
-
-await setDoc(
-    doc(db, "users", uid),
-    userProfileData
-);
-
-showToast(
-    `Success! Registered ${role === 'farmer' ? 'Kisan' : 'Officer'} account.`,
-    'success'
-);
-
-redirectToDashboard(role);
-            } catch (error) {
-                console.error("Signup Error:", error);
-                let msg = error.message;
-                if (error.code === 'auth/email-already-in-use') {
-                    msg = 'This email address is already registered. Please login instead.';
-                } else if (error.code === 'auth/weak-password') {
-                    msg = 'Password should be at least 6 characters long.';
-                } else if (error.code === 'auth/invalid-email') {
-                    msg = 'Please provide a valid email address.';
-                } else if (error.code === 'auth/network-request-failed') {
-                    msg = 'Network request failed. Check your internet connection and try again.';
-                } else if (error.code === 'permission-denied' || error.code === 'firestore/permission-denied') {
-                    msg = 'The profile operation was denied. Check your Firestore security rules.';
-                }
-                showToast(`Signup Failed: ${msg}`, 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalBtnHtml;
-            }
-        };
-
-        window.handleLogin = async function(event, role) {
-    event.preventDefault();
-
-    const submitBtn = role === 'farmer'
-        ? document.getElementById('farmerLoginSubmitBtn')
-        : document.getElementById('officerLoginSubmitBtn');
-
-    const originalBtnHtml = submitBtn.innerHTML;
-
-    const emailInputId = role === 'farmer'
-        ? 'farmerLoginEmail'
-        : 'officerLoginEmail';
-
-    const passInputId = role === 'farmer'
-        ? 'farmerLoginPass'
-        : 'officerLoginPass';
-
-    const email = document.getElementById(emailInputId).value.trim();
-    const password = document.getElementById(passInputId).value;
-
-    try {
-        submitBtn.disabled = true;
-
-        submitBtn.innerHTML = `
-            <i class="fa-solid fa-spinner fa-spin"></i>
-            <span>Authenticating...</span>
-        `;
-
-        // Firebase login
-        const userCredential = await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
-
-        const user = userCredential.user;
-
-        // Get Firestore profile
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-
-        if (!userDoc.exists()) {
-            showToast(
-                "Login successful, but your profile record was not found.",
-                "error"
-            );
-            return;
-        }
-
-        const userData = userDoc.data();
-
-        // Redirect according to role
-        if (userData.role === "farmer" || userData.role === "officer") {
-            redirectToDashboard(userData.role);
-        } else {
-            showToast("Unknown account role.", "error");
-        }
-
-    } catch (error) {
-
-        console.error("Login Error:", error);
-
-        let msg = error.message;
-
-        if (
-            error.code === 'auth/invalid-credential' ||
-            error.code === 'auth/user-not-found' ||
-            error.code === 'auth/wrong-password'
-        ) {
-            msg = 'Invalid email or password.';
-        } else if (error.code === 'auth/network-request-failed') {
-            msg = 'Network request failed. Check your internet connection and try again.';
-        } else if (error.code === 'permission-denied' || error.code === 'firestore/permission-denied') {
-            msg = 'Signed in, but your profile could not be loaded. Check your Firestore security rules.';
-        }
-
-        showToast(`Login Failed: ${msg}`, 'error');
-
-    } finally {
-
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnHtml;
-
-    }
-};
-        // Function: Sign Out User
-        window.signOutUser = async function() {
-            try {
-                await signOut(auth);
-                showToast('You have signed out successfully.', 'info');
-            } catch (error) {
-                showToast(`Sign out error: ${error.message}`, 'error');
-            }
-        };
-
-        
-        // Function: Load and Render User Profile from Firestore
-        async function loadAndDisplayUserProfile(authUser) {
-            const dashDisplayName = document.getElementById('dashDisplayName');
-            const profileRoleBadge = document.getElementById('profileRoleBadge');
-            const profileFieldsGrid = document.getElementById('profileFieldsGrid');
-            const firestoreDocBadge = document.getElementById('firestoreDocBadge');
-            const dashUid = document.getElementById('dashUid');
-            const dashEmail = document.getElementById('dashEmail');
-            const dashCreatedTime = document.getElementById('dashCreatedTime');
-            const headerAvatar = document.getElementById('headerAvatar');
-            const roleActionButtons = document.getElementById('roleActionButtons');
-            const widgetTitle = document.getElementById('widgetTitle');
-            const widgetContent = document.getElementById('widgetContent');
-
-            dashUid.textContent = authUser.uid;
-            dashEmail.textContent = authUser.email;
-            firestoreDocBadge.textContent = `doc: users/${authUser.uid.substring(0, 8)}...`;
-
-            try {
-                // Fetch document from Firestore
-                const userDocRef = doc(db, "users", authUser.uid);
-                const docSnap = await getDoc(userDocRef);
-
-                let data = {};
-                if (docSnap.exists()) {
-                    data = docSnap.data();
-                } else {
-                    // Fallback default data if doc doesn't exist yet
-                    data = {
-                        fullName: authUser.displayName || authUser.email.split('@')[0],
-                        email: authUser.email,
-                        role: 'farmer',
-                        createdAt: new Date().toISOString()
-                    };
-                }
-
-                window.currentUserProfile = data;
-
-                const fullName = data.fullName || 'User';
-                const role = data.role || 'farmer';
-                const isFarmer = role === 'farmer';
-
-                dashDisplayName.textContent = fullName;
-                headerAvatar.textContent = fullName.charAt(0).toUpperCase();
-
-                // Style role badge
-                if (isFarmer) {
-                    profileRoleBadge.textContent = "Kisan / Farmer Profile";
-                    profileRoleBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-400 text-slate-950 shadow-sm";
-                } else {
-                    profileRoleBadge.textContent = "Procurement Officer";
-                    profileRoleBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-400 text-slate-950 shadow-sm";
-                }
-
-                // Render detail grid
-                if (isFarmer) {
-                    profileFieldsGrid.innerHTML = `
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">Full Name</span>
-                            <span class="text-slate-900 font-bold">${data.fullName || 'N/A'}</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">Mobile Phone</span>
-                            <span class="text-slate-900 font-bold">${data.phone || 'N/A'}</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">Village / Panchayat</span>
-                            <span class="text-slate-900 font-bold">${data.village || 'N/A'}</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">District & State</span>
-                            <span class="text-slate-900 font-bold">${data.district || 'N/A'}, ${data.state || ''}</span>
-                        </div>
-                        <div class="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl col-span-1 sm:col-span-2">
-                            <span class="text-xs text-emerald-700 font-semibold uppercase block">Primary Agricultural Crop</span>
-                            <span class="text-emerald-950 font-extrabold text-base flex items-center mt-0.5">
-                                <i class="fa-solid fa-wheat-field mr-2 text-emerald-600"></i> ${data.crop || 'General Agriculture'}
-                            </span>
-                        </div>
-                    `;
-
-                    roleActionButtons.innerHTML = `
-                        <button onclick="simulateSlotBooking()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
-                            <i class="fa-solid fa-calendar-plus"></i>
-                            <span>Book Mandi Slot</span>
-                        </button>
-                        <button onclick="checkMandiPrices()" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <span>Live MSP Prices</span>
-                        </button>
-                    `;
-
-                    widgetTitle.textContent = "Kisan Mandi Procurement Token";
-                    widgetContent.innerHTML = `
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <span class="text-xs text-slate-500 block">Assigned Gate Token Status:</span>
-                                <span class="text-emerald-700 font-extrabold text-lg">TOKEN #MM-2026-${Math.floor(1000 + Math.random() * 9000)}</span>
-                            </div>
-                            <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-md font-bold text-xs border border-emerald-300">
-                                Valid for Inspection
-                            </span>
-                        </div>
-                    `;
-
-                } else {
-                    // Officer View
-                    profileFieldsGrid.innerHTML = `
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">Officer Name</span>
-                            <span class="text-slate-900 font-bold">${data.fullName || 'N/A'}</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">Officer ID Badge</span>
-                            <span class="text-slate-900 font-mono font-bold">${data.officerId || 'N/A'}</span>
-                        </div>
-                        <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl col-span-1 sm:col-span-2">
-                            <span class="text-xs text-slate-500 font-semibold uppercase block">Assigned Procurement Mandi</span>
-                            <span class="text-slate-900 font-bold text-base flex items-center mt-0.5">
-                                <i class="fa-solid fa-building-columns text-indigo-600 mr-2"></i> ${data.centreName || 'Central Mandi'}, ${data.district || ''}
-                            </span>
-                        </div>
-                    `;
-
-                    roleActionButtons.innerHTML = `
-                        <button onclick="simulateOfficerLedger()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
-                            <i class="fa-solid fa-file-invoice"></i>
-                            <span>View Farmer Ledger</span>
-                        </button>
-                        <button onclick="simulateGatePass()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 shadow-sm">
-                            <i class="fa-solid fa-barcode"></i>
-                            <span>Verify Token Pass</span>
-                        </button>
-                    `;
-
-                    widgetTitle.textContent = "Mandi Station Operations Summary";
-                    widgetContent.innerHTML = `
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-                            <div class="p-2 bg-white rounded-lg border border-slate-200">
-                                <span class="text-[11px] text-slate-500 block">Total Slots</span>
-                                <span class="font-extrabold text-slate-800 text-base">142</span>
-                            </div>
-                            <div class="p-2 bg-white rounded-lg border border-slate-200">
-                                <span class="text-[11px] text-slate-500 block">Verified Today</span>
-                                <span class="font-extrabold text-emerald-600 text-base">89</span>
-                            </div>
-                            <div class="p-2 bg-white rounded-lg border border-slate-200">
-                                <span class="text-[11px] text-slate-500 block">Procured (MT)</span>
-                                <span class="font-extrabold text-amber-600 text-base">1,240</span>
-                            </div>
-                            <div class="p-2 bg-white rounded-lg border border-slate-200">
-                                <span class="text-[11px] text-slate-500 block">Pending Gate</span>
-                                <span class="font-extrabold text-indigo-600 text-base">12</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                if (data.createdAt) {
-                    const dateObj = new Date(data.createdAt);
-                    dashCreatedTime.textContent = dateObj.toLocaleDateString('en-IN', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
-
-            } catch (error) {
-                console.error("Error reading profile document from Firestore:", error);
-                showToast(`Firestore Read Note: ${error.message}`, 'info');
-            }
-        }
-
-        // Dashboard Action Helpers
-        window.simulateSlotBooking = function() {
-            showToast("Slot booking system synced! Picked next available window: Tomorrow, 9:00 AM.", "success");
-        };
-
-        window.checkMandiPrices = function() {
-            showToast("Wheat MSP set at ₹2,275/quintal | Paddy Grade A set at ₹2,203/quintal.", "info");
-        };
-
-        window.simulateOfficerLedger = function() {
-            showToast("Procurement Ledger loaded for current shift. 89 entries verified.", "info");
-        };
-
-        window.simulateGatePass = function() {
-            showToast("Token scanner active. Waiting for farmer QR verification...", "info");
-        };
-
-        // Function: Toast Notification Generator
+        // Toast Notification Helper
         window.showToast = function(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
 
             const toast = document.createElement('div');
-            toast.className = `pointer-events-auto flex items-start space-x-3 p-4 rounded-xl shadow-xl border text-xs sm:text-sm font-medium transition-all transform translate-y-2 opacity-0 duration-300`;
+            toast.className = `pointer-events-auto flex items-center gap-3 p-4 rounded-xl shadow-lg border text-sm font-medium transition-all transform translate-y-2 opacity-0 duration-300 ${
+                type === 'error' ? 'bg-rose-50 border-rose-200 text-rose-800' :
+                type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-800' :
+                'bg-slate-900 border-slate-800 text-white'
+            }`;
 
-            let iconClass = 'fa-info-circle text-blue-500';
-            let bgClass = 'bg-white border-slate-200 text-slate-800';
+            const iconClass = type === 'error' ? 'fa-circle-xmark text-rose-500' :
+                              type === 'success' ? 'fa-circle-check text-emerald-500' :
+                              'fa-circle-info text-sky-400';
 
-            if (type === 'success') {
-                iconClass = 'fa-circle-check text-emerald-500';
-                bgClass = 'bg-emerald-950 text-emerald-100 border-emerald-800';
-            } else if (type === 'error') {
-                iconClass = 'fa-triangle-exclamation text-rose-500';
-                bgClass = 'bg-slate-900 text-rose-200 border-rose-900';
-            } else if (type === 'info') {
-                iconClass = 'fa-circle-info text-amber-500';
-                bgClass = 'bg-slate-900 text-amber-100 border-amber-900/60';
-            }
-
-            toast.className += ` ${bgClass}`;
-            toast.innerHTML = `
-                <i class="fa-solid ${iconClass} text-base mt-0.5 shrink-0"></i>
-                <div class="flex-1 leading-snug">${message}</div>
-                <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white ml-2">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            `;
-
+            toast.innerHTML = `<i class="fa-solid ${iconClass} text-lg"></i><span class="flex-1">${message}</span>`;
             container.appendChild(toast);
 
-            // Trigger animation
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 10);
 
-            // Auto dismiss after 4.5s
             setTimeout(() => {
                 toast.classList.add('opacity-0', 'translate-y-2');
                 setTimeout(() => toast.remove(), 300);
-            }, 4500);
+            }, 4000);
         };
 
-        // Keep the authentication page and dashboard in sync with Firebase.
-        // If an authenticated user opens auth.html again, send them to the
-        // correct dashboard instead of showing the login screen.
-        onAuthStateChanged(auth, async (authUser) => {
-            if (!authUser) return;
-
-            // The submit handlers already perform the profile read/write.
-            // Skip this lookup during submission to avoid duplicate Firestore work.
-            const formIsSubmitting =
-                document.querySelector('button[type="submit"]:disabled') !== null;
-            if (formIsSubmitting) return;
+        // Handle User Login
+        window.handleLogin = async function(e, role) {
+            e.preventDefault();
+            const email = role === 'farmer' 
+                ? document.getElementById('farmerLoginEmail').value 
+                : document.getElementById('officerLoginEmail').value;
+            const password = role === 'farmer' 
+                ? document.getElementById('farmerLoginPass').value 
+                : document.getElementById('officerLoginPass').value;
+            const submitBtn = document.getElementById(`${role}LoginSubmitBtn`);
 
             try {
-                const snap = await getDoc(doc(db, "users", authUser.uid));
-                if (!snap.exists()) return;
+                if (submitBtn) submitBtn.disabled = true;
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
 
-                const role = snap.data().role;
-                if (role === "farmer" || role === "officer") {
-                    redirectToDashboard(role);
+                // Verify Firestore Role Record
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    if (userData.role && userData.role !== role) {
+                        window.showToast(`Account registered as ${userData.role.toUpperCase()}. Please use the appropriate login tab.`, 'error');
+                        await signOut(auth);
+                        if (submitBtn) submitBtn.disabled = false;
+                        return;
+                    }
                 }
-            } catch (error) {
-                console.error("Auth state/profile lookup error:", error);
-                showToast("Could not load your profile. Check your internet connection and try again.", "error");
+
+                window.showToast(`Welcome back! Redirecting to ${role} portal...`, 'success');
+                setTimeout(() => redirectToDashboard(role), 1200);
+            } catch (err) {
+                console.error("Login Error:", err);
+                window.showToast(err.message.replace('Firebase: ', ''), 'error');
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        };
+
+        // Handle User Signup
+        window.handleSignup = async function(e, role) {
+            e.preventDefault();
+            const submitBtn = document.getElementById(`${role}RegSubmitBtn`);
+
+            try {
+                if (submitBtn) submitBtn.disabled = true;
+
+                let email, password, payload;
+
+                if (role === 'farmer') {
+                    email = document.getElementById('farmerRegEmail').value;
+                    password = document.getElementById('farmerRegPass').value;
+                    payload = {
+                        fullName: document.getElementById('farmerFullName').value,
+                        phone: document.getElementById('farmerPhone').value,
+                        village: document.getElementById('farmerVillage').value,
+                        district: document.getElementById('farmerDistrict').value,
+                        state: document.getElementById('farmerState').value,
+                        crop: document.getElementById('farmerCrop').value,
+                        role: 'farmer'
+                    };
+                } else {
+                    email = document.getElementById('officerRegEmail').value;
+                    password = document.getElementById('officerRegPass').value;
+                    payload = {
+                        fullName: document.getElementById('officerFullName').value,
+                        badgeId: document.getElementById('officerIdBadge').value,
+                        centreName: document.getElementById('officerCentreName').value,
+                        district: document.getElementById('officerDistrict').value,
+                        role: 'officer'
+                    };
+                }
+
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Store User metadata in Firestore
+                await setDoc(doc(db, "users", user.uid), {
+                    uid: user.uid,
+                    email: email,
+                    ...payload,
+                    createdAt: serverTimestamp()
+                });
+
+                window.showToast('Registration successful! Redirecting to dashboard...', 'success');
+                setTimeout(() => redirectToDashboard(role), 1200);
+            } catch (err) {
+                console.error("Signup Error:", err);
+                window.showToast(err.message.replace('Firebase: ', ''), 'error');
+                if (submitBtn) submitBtn.disabled = false;
+            }
+        };
+
+        // Auth State Observer
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    if (userDoc.exists()) {
+                        window.currentUserProfile = userDoc.data();
+                    }
+                } catch (err) {
+                    console.error("Auth state fetch error:", err);
+                }
             }
         });
-
-        // Optional header logout button handler.
-        const headerLogoutBtn = document.getElementById('headerLogoutBtn');
-        if (headerLogoutBtn) {
-            headerLogoutBtn.addEventListener('click', signOutUser);
-        }
     </script>
 </body>
 </html>
