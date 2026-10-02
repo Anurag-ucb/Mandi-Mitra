@@ -23,6 +23,9 @@ def index():
     return render_template("index.html")
 
 
+
+
+
 # ---------------- FARMER LOGIN ----------------
 
 @app.route("/auth", methods=["GET", "POST"])
